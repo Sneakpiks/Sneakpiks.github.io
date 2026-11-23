@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Edward Liu Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..700&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a star atlas. A night sky behind everything, an orrery in the hero
+   with the player as the sun, then chart plates in one reading column.
+   Single night theme by choice: the whole page lives in one sky. */
+:root {
+  --sky: #060a18;
+  --deep: #0c1330;
+  --ink: #ece6d6;
+  --muted: #a3a9c2;
+  --line: #27305a;
+  --gold: #d9b56a;
+  --gold-ink: #0a0d1c;
+  --moon: #a9c4ff;
+  --display: "Cinzel", "Trajan Pro", "Times New Roman", serif;
+  --body: "Spectral", "Iowan Old Style", Georgia, serif;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background-color: var(--sky);
+  background-image:
+    radial-gradient(900px 600px at 85% -5%, rgba(40, 62, 140, 0.38), transparent 70%),
+    radial-gradient(700px 520px at 5% 45%, rgba(22, 70, 96, 0.22), transparent 70%);
+  background-repeat: no-repeat;
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+#sky { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+.wrap { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+a { color: var(--moon); text-underline-offset: 3px; }
+a:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; border-radius: 2px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 500; text-wrap: balance; margin: 0; }
+p, figure { margin: 0; }
+ul { margin: 0; padding: 0; list-style: none; }
+
+.label {
+  font-family: var(--display); font-size: 12.5px; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold);
+}
+
+/* Top bar */
+.top {
+  display: flex; flex-wrap: wrap; gap: 10px 28px;
+  align-items: baseline; justify-content: space-between;
+  padding: 24px 0;
+}
+.top .id { font-family: var(--display); font-size: 15px; letter-spacing: 0.14em; text-transform: uppercase; }
+.top nav { display: flex; flex-wrap: wrap; gap: 6px 30px; }
+@media (max-width: 480px) { .top nav { gap: 6px 16px; } .top nav a { font-size: 13.5px; letter-spacing: 0.08em; } }
+.top nav a {
+  font-family: var(--display); font-size: 16px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none;
+}
+.top nav a:hover { color: var(--gold); }
+
+/* Hero */
+.hero { padding: 40px 0 24px; display: grid; grid-template-columns: minmax(0, 1fr) 470px; gap: 32px 40px; align-items: center; }
+@media (max-width: 900px) { .hero { grid-template-columns: 1fr; } .feat { width: 100%; max-width: 400px; justify-self: center; } }
+
+html, body { overflow-x: clip; }
+/* Featured projects: a turning star wheel, one project in view at a time */
+.feat-head { display: flex; justify-content: center; margin-bottom: 4px; }
+.feat-title { font-family: var(--display); font-size: 1.25rem; letter-spacing: 0.08em; color: var(--ink); }
+.feat-state { font-family: var(--display); font-size: 10.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+.wheel { display: block; position: relative; aspect-ratio: 290 / 270; perspective: 900px; outline-offset: 6px; --ox: 50%; --oy: 50%; }
+.w-tilt { position: absolute; inset: 0; display: block; transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(var(--sc, 1)); transition: transform 0.25s ease-out; will-change: transform; }
+.w-turn { position: absolute; inset: 0; display: block; transform-origin: 50% var(--oy); transform: rotate(var(--turn, 0deg)); transition: transform 1.1s cubic-bezier(0.3, 0.9, 0.25, 1); }
+.wheel svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.w-ring { transform-origin: 50% var(--oy); }
+/* Multi-lens magnifier: copper bezel, geared focus ring, three swing-arm lenses */
+.mg-knurl line { stroke: #1a0f07; stroke-width: 0.5; opacity: 0.55; }
+.mg-nums text { font-family: var(--display); font-size: 5px; letter-spacing: 0.05em; fill: #c9b48a; opacity: 0.35; }
+.mg-scale line { stroke: #c9b48a; stroke-width: 0.5; opacity: 0.3; }
+.mg-reticle line, .mg-reticle circle { fill: none; stroke: #c9d4f0; stroke-width: 0.4; opacity: 0.1; }
+.mg-reticle circle { stroke-dasharray: 2 5; }
+.mg-motes circle { fill: #dfe6ff; animation: mote 4.5s ease-in-out infinite; }
+.mg-motes circle:nth-child(3n) { animation-delay: -1.5s; }
+.mg-motes circle:nth-child(3n+1) { animation-delay: -3s; }
+.mg-glint { animation: glint 7s ease-in-out infinite; }
+.mg-lens { filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.6)); }
+.wheel:hover .mg-lens:last-child, .wheel:focus-visible .mg-lens:last-child { filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 10px rgba(217, 181, 106, 0.28)); }
+.w-glass { pointer-events: none; }
+@keyframes mote { 0%, 100% { opacity: 0.15; } 50% { opacity: 0.85; } }
+@keyframes glint { 0%, 70% { transform: rotate(28deg) translateX(-140px); } 100% { transform: rotate(28deg) translateX(200px); } }
+.w-ring circle { fill: none; stroke: var(--line); stroke-width: 1; }
+.w-ring circle:first-child { stroke: rgba(217, 181, 106, 0.55); }
+.w-ticks line { stroke: var(--muted); stroke-width: 0.8; opacity: 0.7; }
+.w-nums text { font-family: var(--display); font-size: 9px; letter-spacing: 0.1em; fill: var(--muted); }
+.w-pole { color: var(--gold); fill: var(--gold); }
+.w-const { transform-origin: var(--ox) var(--oy); transition: opacity 0.35s ease, transform 0.35s ease; }
+.w-const .g-lines line { stroke-width: 0.9; stroke: rgba(240, 214, 150, 0.85); }
+.w-const .g-dots circle { filter: drop-shadow(0 0 3px rgba(255, 240, 200, 0.9)); }
+.lens-pic.pixel { image-rendering: pixelated; }
+.w-const { transition: opacity 0.7s ease; }
+.wheel.out .w-const { opacity: 0; transition-duration: 0.3s; }
+.wheel.in .g-lines line { animation: trace 1.1s ease-out both; }
+.feat-name { margin-top: 10px; text-align: center; font-family: var(--display); font-size: 1.2rem; letter-spacing: 0.04em; color: var(--gold); transition: opacity 0.3s ease; }
+.feat-sub { text-align: center; font-style: italic; font-size: 0.92rem; color: var(--muted); transition: opacity 0.3s ease; }
+.feat.out .feat-name, .feat.out .feat-sub { opacity: 0; }
+.feat-nav { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; }
+.feat-btn { width: 40px; height: 34px; border: 1px solid var(--line); border-radius: 3px; background: transparent; color: var(--ink); font: inherit; font-size: 1rem; cursor: pointer; transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease; }
+.feat-btn:hover { border-color: var(--gold); color: var(--gold); }
+.feat-btn:active { transform: scale(0.92); }
+.feat-dots { display: flex; justify-content: center; align-items: center; gap: 14px; margin-top: 18px; flex-wrap: wrap; }
+.feat-group { display: flex; align-items: center; gap: 2px; }
+.feat-group > span { margin-right: 6px; font-family: var(--display); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+.feat-dot { width: 20px; height: 20px; padding: 0; border: 0; background: transparent; cursor: pointer; display: grid; place-items: center; }
+.feat-dot::after { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--muted); opacity: 0.6; transition: transform 0.25s ease, background-color 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease; }
+.feat-dot:hover::after { opacity: 1; background: var(--ink); }
+.feat-dot[aria-current="true"]::after { opacity: 1; background: var(--gold); transform: scale(1.6); box-shadow: 0 0 8px rgba(217, 181, 106, 0.9); }
+.feat-state { transition: color 0.3s ease; }
+.feat.out .feat-state { color: transparent; }
+.feat-count { font-family: var(--display); font-size: 11px; letter-spacing: 0.2em; color: var(--muted); }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes sway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+.routed .view.active { animation: appear 0.5s ease both; }
+h1 {
+  margin-top: 18px;
+  font-size: clamp(2.3rem, 5.4vw, 4.2rem);
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+}
+h1 em { font-style: normal; color: var(--gold); }
+.hero-quote { margin: 0; }
+.hero-quote blockquote { margin: 0; }
+.hero-quote h1 { font-size: clamp(1.9rem, 3.6vw, 3rem); line-height: 1.15; }
+.hero-quote cite { font-style: normal; }
+.hero-quote figcaption { margin-top: 14px; font-family: var(--display); font-size: 1rem; letter-spacing: 0.16em; color: var(--gold); }
+.lede { max-width: 54ch; margin-top: 24px; color: var(--muted); font-size: 1.1rem; }
+.lede strong { color: var(--ink); font-weight: 600; }
+.actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 32px; }
+.btn {
+  display: inline-block; padding: 12px 22px;
+  font-family: var(--display); font-size: 13px; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none;
+  color: var(--gold); border: 1px solid var(--gold); border-radius: 999px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.btn:hover, .btn.primary { background: var(--gold); color: var(--gold-ink); }
+.btn.primary:hover { background: var(--ink); border-color: var(--ink); }
+
+/* Sections */
+section { padding: 60px 0; max-width: 860px; }
+.head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.head::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--line), transparent); }
+.head-big { margin-bottom: 28px; }
+.head-big h2 { margin: 0; }
+.sec-sub { margin: -8px 0 22px; font-family: var(--display); font-size: 1.3rem; letter-spacing: 0.02em; color: var(--gold); }
+.head-big .star { width: 20px; height: 20px; }
+.star { width: 14px; height: 14px; flex: none; fill: var(--gold); }
+h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); line-height: 1.2; letter-spacing: 0.02em; margin-bottom: 26px; }
+.prose { max-width: 62ch; }
+.prose p + p { margin-top: 14px; }
+.chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.chip {
+  font-family: var(--display); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted);
+}
+
+/* Project plates */
+.plates { display: grid; gap: 28px; }
+.plate {
+  position: relative;
+  padding: 32px;
+  background: linear-gradient(180deg, rgba(12, 19, 48, 0.88), rgba(8, 12, 30, 0.88));
+  border: 1px solid var(--line);
+}
+.plate.current { border-color: var(--gold); }
+.plate.current::before, .plate.current::after {
+  content: ""; position: absolute; width: 9px; height: 9px;
+  background: var(--gold); transform: rotate(45deg);
+}
+.plate.current::before { top: -5px; left: -5px; }
+.plate.current::after { bottom: -5px; right: -5px; }
+.plate .when { color: var(--muted); font-size: 0.95rem; font-variant-numeric: tabular-nums; }
+.plate .tagline { display: flex; flex-wrap: wrap; gap: 4px 18px; align-items: baseline; margin-bottom: 10px; }
+.plate h3 { font-size: clamp(1.5rem, 2.8vw, 2rem); letter-spacing: 0.03em; line-height: 1.2; }
+.plate .role { margin-top: 4px; font-style: italic; color: var(--gold); }
+.plate .blurb { margin-top: 16px; max-width: 62ch; }
+.spec { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px 32px; margin-top: 26px; }
+.spec li { padding-top: 14px; border-top: 1px solid var(--line); color: var(--muted); }
+.spec .label { display: block; margin-bottom: 4px; font-size: 11.5px; color: var(--ink); }
+
+/* In development */
+.wip { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px 44px; }
+.wip li { padding-top: 18px; border-top: 1px solid var(--line); }
+.wip h3 { font-size: 1.15rem; letter-spacing: 0.03em; line-height: 1.3; }
+.wip .tool { display: block; margin: 4px 0 8px; font-size: 11.5px; }
+.wip p { color: var(--muted); }
+
+/* Skills */
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 30px 44px; }
+.cols h3 { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.cols li { padding: 3px 0; }
+
+/* Education: a trajectory of points */
+.path { position: relative; display: grid; gap: 34px; padding-left: 34px; }
+.path::before { content: ""; position: absolute; left: 5px; top: 10px; bottom: 10px; width: 1px; background: var(--line); }
+.path li { position: relative; }
+.path li::before {
+  content: ""; position: absolute; left: -34px; top: 9px; width: 11px; height: 11px;
+  border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 5px rgba(217, 181, 106, 0.14);
+}
+.path .when { color: var(--muted); font-size: 0.95rem; font-variant-numeric: tabular-nums; }
+.path h3 { font-size: 1.25rem; letter-spacing: 0.03em; line-height: 1.3; }
+.path .deg { color: var(--gold); font-style: italic; }
+.path .note { max-width: 62ch; color: var(--muted); }
+
+/* Contact */
+.email { font-size: clamp(1.05rem, 2.4vw, 1.35rem); overflow-wrap: anywhere; }
+footer {
+  margin-top: 0; padding: 24px 0 44px; border-top: 1px solid var(--line);
+  font-family: var(--display); font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
+}
+
+/* Pages: one view shown at a time, chosen by the URL hash */
+.routed .view { display: none; }
+.routed .view.active { display: block; }
+a.id { color: var(--ink); text-decoration: none; }
+a.id:hover { color: var(--gold); }
+.top nav a[aria-current="page"] { color: var(--gold); border-bottom: 1px solid var(--gold); padding-bottom: 3px; }
+.page-head { padding: 40px 0 8px; }
+.page-title { font-size: clamp(2rem, 4.6vw, 3.4rem); }
+.page-head .lede { margin-top: 14px; }
+.page-head .role { display: flex; align-items: center; gap: 14px; margin-top: 12px; font-style: italic; font-size: 1.3rem; color: var(--ink); opacity: 0.85; }
+.page-head .role::before { content: ""; width: 34px; height: 1px; background: var(--gold); box-shadow: 0 0 6px rgba(217, 181, 106, 0.6); }
+.contact { max-width: 860px; padding: 56px 0 40px; }
+.contact-line { font-family: var(--display); font-size: clamp(1.5rem, 3.2vw, 2.2rem); line-height: 1.25; margin-bottom: 10px; }
+
+/* Star map: each constellation is a tab, each star a link to a section */
+.consts { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px 56px; padding: 8px 0 64px; }
+.const { display: flex; flex-direction: column; gap: 10px; padding: 0; }
+.const-head { padding-bottom: 6px; border-bottom: 1px solid transparent; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; }
+.const-title { font-family: var(--display); font-size: 1.35rem; letter-spacing: 0.04em; color: var(--ink); text-decoration: none; }
+.const-title:hover { color: var(--gold); }
+.const:hover .const-title, .const:focus-within .const-title { color: var(--gold); }
+.const-sub { font-style: italic; color: var(--muted); font-size: 0.95rem; }
+.const svg { display: block; width: 100%; height: auto; overflow: visible; }
+.lines line { stroke: var(--line); stroke-width: 1.4; transition: stroke 0.2s ease; }
+.const:hover .lines line, .const:focus-within .lines line { stroke: rgba(217, 181, 106, 0.75); }
+.dim { fill: var(--muted); opacity: 0.55; }
+.s-link { cursor: pointer; outline: none; }
+.s-link .hit { fill: transparent; }
+.s-link .pt { fill: var(--ink); transition: fill 0.2s ease; }
+.s-link .main { fill: var(--gold); }
+.s-link .ring { fill: none; stroke: var(--gold); stroke-width: 1; opacity: 0; transition: opacity 0.2s ease; }
+.s-link text { fill: var(--muted); font-family: var(--body); font-style: italic; font-size: 14px; transition: fill 0.2s ease; }
+.s-link:hover .pt, .s-link:focus-visible .pt { fill: var(--gold); }
+.s-link:hover text, .s-link:focus-visible text { fill: var(--ink); }
+.s-link:hover .ring, .s-link:focus-visible .ring { opacity: 1; }
+.glow { fill: var(--gold); opacity: 0.18; animation: glow 4.5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes glow { 0%, 100% { transform: scale(1); opacity: 0.18; } 50% { transform: scale(1.5); opacity: 0.06; } }
+.const-note { min-height: 3.3em; margin-top: 4px; color: var(--muted); font-size: 0.98rem; }
+.const-note strong { color: var(--gold); font-family: var(--display); font-weight: 500; letter-spacing: 0.04em; }
+#about-philosophy, #about-skills, #about-education, .plate, .wip li { scroll-margin-top: 24px; }
+
+.goal { margin: 22px 0 0; padding: 4px 0 4px 20px; border-left: 2px solid var(--gold); }
+.goal p { margin-top: 4px; font-size: 1.15rem; font-style: italic; color: var(--ink); max-width: 58ch; }
+.gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin-top: 28px; }
+.shot.wide { grid-column: 1 / -1; }
+#portfolio-cu-raiders .spec { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.shot img { display: block; width: 100%; height: auto; border: 1px solid var(--line); }
+.shot figcaption { margin-top: 8px; font-style: italic; font-size: 0.92rem; color: var(--muted); }
+
+.split { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 28px 40px; align-items: start; }
+.split .actions { margin-top: 24px; }
+.shot.pixel img { width: 320px; max-width: 100%; image-rendering: pixelated; }
+.panels .plate .split .shot.pixel { margin-top: 48px; }
+@media (max-width: 720px) { .panels .plate .split .shot.pixel { margin-top: 0; } }
+@media (max-width: 720px) { .split { grid-template-columns: 1fr; } }
+
+/* Project tabs: a line of stars, the selected one lit */
+.tabs { --n: 5; position: relative; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); max-width: calc(var(--n) * 200px); margin: 40px 0 30px; }
+.tabs::before, .tabs::after {
+  content: ""; position: absolute; top: 22px; height: 1px; left: 23px;
+}
+.tabs::before { width: calc((var(--n) - 1) * 100% / var(--n)); background: var(--line); }
+.tabs::after {
+  width: calc(var(--lit, 0) * 100% / var(--n)); background: var(--gold);
+  box-shadow: 0 0 6px rgba(217, 181, 106, 0.6);
+  transition: width 0.5s ease;
+}
+.tab { position: relative; display: grid; justify-items: start; gap: 3px; padding: 14px 12px 10px; text-decoration: none; border-radius: 4px; }
+.tab-star {
+  position: relative; width: 16px; height: 16px; margin: 0 0 12px 3px;
+  background: radial-gradient(circle, var(--sky) 0 38%, transparent 60%);
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+.tab-star::after {
+  content: ""; position: absolute; inset: -3px;
+  clip-path: polygon(50% 0, 61.4% 38.6%, 100% 50%, 61.4% 61.4%, 50% 100%, 38.6% 61.4%, 0 50%, 38.6% 38.6%);
+  background: var(--muted); transition: background-color 0.2s ease;
+}
+.tab-name { font-family: var(--display); font-size: 1.02rem; letter-spacing: 0.04em; color: var(--muted); line-height: 1.3; transition: color 0.2s ease; }
+.tab-sub { font-style: italic; font-size: 0.88rem; color: var(--muted); opacity: 0.8; }
+.tab-name, .tab-sub { min-width: 0; max-width: 100%; overflow-wrap: break-word; text-wrap: balance; }
+.tab:hover .tab-name { color: var(--ink); }
+.tab:hover .tab-star { transform: scale(1.15); }
+.tab:hover .tab-star::after { background: var(--ink); }
+.tab[aria-selected="true"] .tab-name { color: var(--gold); }
+.tab[aria-selected="true"] .tab-star {
+  transform: scale(1.55);
+  filter: drop-shadow(0 0 4px rgba(255, 228, 160, 0.95)) drop-shadow(0 0 10px rgba(217, 181, 106, 0.6));
+}
+.tab[aria-selected="true"] .tab-star::after { background: var(--gold); }
+.routed .panels .plate { display: none; }
+.routed .panels .plate.active { display: block; animation: appear 0.45s ease both; }
+@keyframes appear { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.panels { max-width: 860px; padding-bottom: 20px; }
+
+/* Plates as star charts: faint chart grid, a constellation in the corner */
+.panels .plate {
+  background:
+    radial-gradient(circle at 100% 0%, transparent 0 139px, rgba(39, 48, 90, 0.55) 140px, transparent 141px),
+    radial-gradient(circle at 100% 0%, transparent 0 259px, rgba(39, 48, 90, 0.45) 260px, transparent 261px),
+    radial-gradient(circle at 100% 0%, transparent 0 419px, rgba(39, 48, 90, 0.35) 420px, transparent 421px),
+    repeating-linear-gradient(90deg, rgba(39, 48, 90, 0.18) 0 1px, transparent 1px 72px),
+    linear-gradient(180deg, rgba(12, 19, 48, 0.9), rgba(8, 12, 30, 0.9));
+}
+.plate-glyph { position: absolute; top: 18px; right: 22px; width: 140px; text-align: right; pointer-events: none; }
+.plate-glyph svg { display: block; width: 140px; height: auto; overflow: visible; }
+/* Home: About me as a row of three small constellations */
+/* Art page: a gallery of plates */
+.art-film { margin-top: 28px; border: 1px solid var(--line); background: #000; }
+.art-film video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; }
+.art-hero { position: relative; display: flex; justify-content: center; margin: 26px 0 0; background: #1e2a37; border: 1px solid var(--line); overflow: hidden; }
+.art-hero::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(6, 10, 24, 0.55), transparent 22%, transparent 78%, rgba(6, 10, 24, 0.55)); }
+.art-hero-video { display: block; height: clamp(220px, 38vw, 440px); max-width: 100%; width: auto; object-fit: contain; aspect-ratio: 155 / 144; image-rendering: pixelated; }
+/* Pavlova: story, flow route, values */
+.pav-block { margin-top: 30px; max-width: 64ch; }
+.pav-block .label, .pav-comps .label { display: block; margin-bottom: 8px; }
+.route { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 0; }
+.route li { display: flex; align-items: center; font-family: var(--display); font-size: 0.95rem; letter-spacing: 0.03em; color: var(--ink); }
+.route li span { padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: rgba(6, 10, 24, 0.5); white-space: nowrap; }
+.route li.end span { border-color: var(--gold); color: var(--gold); }
+.route li + li::before { content: ""; width: 22px; height: 1px; margin: 0 4px; background: var(--gold); opacity: 0.6; }
+.route-note { margin-top: 12px; color: var(--muted); font-size: 0.95rem; font-style: italic; }
+.pav-values { margin-top: 30px; }
+.pav-comps { margin-top: 26px; color: var(--ink); }
+.art-grid.pav-art { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); align-items: start; margin-top: 32px; }
+/* Visuals lead each project card */
+.plate-hero { margin: 42px 0 6px; clear: both; }
+@media (max-width: 720px) { .plate-hero { margin-top: 20px; } }
+.plate-hero > .gallery, .plate-hero > .art-grid { margin-top: 0; }
+.shot-link { display: block; cursor: zoom-in; }
+.shot-link img { transition: transform 0.35s ease, border-color 0.25s ease; }
+.shot-link:hover img, .shot-link:focus-visible img { border-color: var(--gold); }
+.sl-hero { display: grid; grid-template-columns: minmax(0, 1fr) 200px; gap: 18px; align-items: end; }
+.sl-hero .art-hero { margin: 0; }
+.sl-hero .shot.pixel img { width: 100%; }
+@media (max-width: 720px) { .sl-hero { grid-template-columns: 1fr; } .sl-hero .shot.pixel { max-width: 240px; } }
+.cel-shot { max-width: 420px; }
+.cel-shot img { background: #fff; }
+.pav-duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; max-width: 620px; }
+.pav-wide { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 26px; align-items: center; margin-top: 30px; }
+.pav-side { color: var(--muted); max-width: 40ch; }
+.pav-side .label { display: block; margin-bottom: 8px; }
+.pav-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 240px); gap: 30px; align-items: start; margin-top: 30px; }
+.pav-split .pav-block { margin-top: 0; }
+.pav-boss { margin-top: 26px; max-width: 560px; }
+.pav-fig { margin: 0; }
+@media (max-width: 720px) { .pav-wide, .pav-split { grid-template-columns: 1fr; } .pav-split .pav-fig { max-width: 260px; } }
+/* Key facts and selected work on the first page */
+.facts { list-style: none; margin: 22px 0 0; padding: 0; display: grid; gap: 8px; }
+.facts li { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 1.02rem; }
+.facts li strong { color: var(--ink); font-weight: 600; }
+.facts .star { width: 12px; height: 12px; flex: none; color: var(--gold); fill: var(--gold); }
+.toolbar { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: 10px 14px; margin-top: 22px; }
+.toolbar .tb-label { padding-top: 7px; }
+.tb-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.tb-label { font-family: var(--display); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); }
+.tb { padding: 4px 11px; border: 1px solid var(--line); border-radius: 999px; font-size: 0.9rem; color: var(--ink); background: rgba(6, 10, 24, 0.45); }
+.hero-actions { margin-top: 26px; }
+.btn.ghost { border-color: var(--line); color: var(--ink); background: transparent; }
+.btn.ghost:hover { border-color: var(--gold); color: var(--gold); }
+.work { max-width: none; padding-top: 28px; }
+/* Even rhythm between the home page sections: a line, then the same space above and below it */
+#view-home > section { --gap: 56px; padding-bottom: var(--gap); max-width: none; }
+#view-home > section > :not(.head):not(.wk-grid):not(.skill-grid) { max-width: 860px; }
+.contact { max-width: none; }
+.contact > * { max-width: 860px; }
+#view-home > section + section { padding-top: var(--gap); border-top: 1px solid var(--line); }
+#view-home > section > :last-child { margin-bottom: 0; }
+.contact { border-top: 1px solid var(--line); }
+@media (max-width: 640px) { #view-home > section { --gap: 40px; } .contact { padding-top: 40px; } }
+.wk-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; margin-top: 22px; }
+@media (max-width: 980px) { .wk-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .wk-grid { grid-template-columns: 1fr; } }
+.wk { position: relative; display: flex; flex-direction: column; border: 1px solid var(--line); background: linear-gradient(180deg, rgba(12, 19, 48, 0.9), rgba(8, 12, 30, 0.9)); transition: border-color 0.25s ease, transform 0.25s ease; }
+.wk:hover, .wk:focus-within { border-color: var(--gold); transform: translateY(-3px); }
+.wk-link { display: flex; flex-direction: column; flex: 1; text-decoration: none; color: inherit; outline-offset: 4px; }
+.wk-art { aspect-ratio: 16 / 10; overflow: hidden; background: #0a0d1c; border-bottom: 1px solid var(--line); }
+.wk-art img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+.wk:hover .wk-art img { transform: scale(1.04); }
+.wk-pixel { background: #081c1f; }
+.wk-pixel img { object-fit: contain; image-rendering: pixelated; }
+.wk-glyph { display: grid; place-items: center; background: radial-gradient(circle at 50% 50%, rgba(217, 181, 106, 0.12), transparent 60%), repeating-linear-gradient(90deg, rgba(39, 48, 90, 0.25) 0 1px, transparent 1px 36px), #0a0f26; }
+.wk-glyph svg { width: 62%; height: auto; overflow: visible; }
+.wk-glyph .g-lines line { stroke: rgba(217, 181, 106, 0.8); stroke-width: 1.2; }
+.wk-glyph .g-dots circle { fill: var(--ink); filter: drop-shadow(0 0 3px rgba(255, 240, 200, 0.9)); }
+.wk-glyph .g-dots circle:first-child { fill: var(--gold); }
+.wk-body { display: grid; gap: 6px; padding: 16px 18px 18px; flex: 1; align-content: start; }
+.wk-role { font-family: var(--display); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); }
+.wk-name { font-family: var(--display); font-size: 1.2rem; letter-spacing: 0.03em; color: var(--ink); line-height: 1.25; }
+.wk-text { color: var(--muted); font-size: 0.98rem; line-height: 1.5; }
+.wk-more { margin-top: 6px; font-family: var(--display); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink); }
+.wk:hover .wk-more { color: var(--gold); }
+.wk-play { display: block; padding: 0 18px 16px; margin-top: -8px; font-family: var(--display); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); text-decoration: none; }
+.wk-play:hover { text-decoration: underline; }
+.wk-all { margin-top: 18px; }
+.wk-all a { color: var(--muted); }
+.wk-all a:hover { color: var(--gold); }
+.fs-block { margin-top: 26px; max-width: 64ch; }
+.fs-block .label, .fs-text .label { display: block; margin-bottom: 8px; }
+.fs-block p { color: var(--ink); }
+.fs-row { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 30px; align-items: center; margin-top: 34px; padding-top: 30px; border-top: 1px solid var(--line); }
+.fs-row.flip .fs-text { order: 2; }
+.fs-text p { color: var(--muted); }
+.fs-media .shot { margin: 0; }
+.fs-media .shot img { border-radius: 10px; }
+.fs-pair { display: grid; grid-template-columns: 1fr; gap: 16px; max-width: 360px; width: 100%; justify-self: center; }
+.fs-narrow { max-width: 260px; justify-self: center; width: 100%; }
+.fs-more { margin-top: 34px; }
+@media (max-width: 720px) { .fs-row { grid-template-columns: 1fr; gap: 18px; } .fs-row.flip .fs-text { order: 0; } .fs-narrow { justify-self: start; max-width: 220px; } }
+.resume-sheet { margin: 34px 0 70px; max-width: 820px; }
+button.btn { font: inherit; font-family: var(--display); font-size: 13px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; background: transparent; cursor: pointer; }
+.resume-msg { margin-top: 12px; min-height: 1.4em; color: var(--muted); font-style: italic; font-size: 0.95rem; }
+.resume-sheet img { display: block; width: 100%; height: auto; background: #fff; border: 1px solid var(--line); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); }
+.skill-grid { display: grid; grid-template-columns: 1.35fr 0.8fr 1fr 1fr; gap: 24px 32px; }
+.skill-grid h3 { margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+.skill-grid ul { list-style: none; margin: 0; padding: 0; }
+.skill-grid li { padding: 2px 0; }
+@media (max-width: 900px) { .skill-grid { grid-template-columns: 1fr 1fr; } }
+.hero-strip { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 24px 56px; align-items: center; margin: 4px 0 0; padding: 28px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.hero-strip .facts, .hero-strip .toolbar { margin-top: 0; }
+.hero .feat { padding: 0; }
+.strip-label { margin: 0 0 14px; }
+.hero-strip { align-items: start; }
+@media (max-width: 900px) { .hero-strip { grid-template-columns: 1fr; } }
+/* Pop-up viewer for art */
+.lightbox { position: fixed; inset: 0; z-index: 50; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 18px; padding: 56px 24px 24px; background: rgba(4, 6, 16, 0.92); backdrop-filter: blur(6px); }
+.lightbox[hidden] { display: none; }
+.lightbox.open { animation: lb-in 0.25s ease both; }
+.lightbox.open .lb-fig { animation: lb-pop 0.3s cubic-bezier(0.3, 0.9, 0.25, 1) both; }
+@keyframes lb-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes lb-pop { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
+.lb-fig { margin: 0; display: grid; justify-items: center; gap: 14px; min-width: 0; }
+.lb-img { display: block; max-width: 100%; max-height: calc(100vh - 170px); width: auto; height: auto; border: 1px solid var(--line); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6); background: #0a0d1c; }
+.lb-img.pixel { image-rendering: pixelated; }
+.lb-fig figcaption { display: grid; justify-items: center; gap: 2px; text-align: center; }
+.lb-close { position: absolute; top: 12px; right: 16px; width: 42px; height: 42px; border: 1px solid var(--line); border-radius: 50%; background: transparent; color: var(--ink); font-size: 1.6rem; line-height: 1; cursor: pointer; transition: border-color 0.2s ease, color 0.2s ease; }
+.lb-close:hover, .lb-close:focus-visible { border-color: var(--gold); color: var(--gold); }
+.lightbox.single .lb-prev, .lightbox.single .lb-next { visibility: hidden; }
+body.lb-lock { overflow: hidden; }
+@media (max-width: 640px) { .lightbox { grid-template-columns: 1fr 1fr; padding: 60px 14px 18px; } .lb-fig { grid-column: 1 / -1; grid-row: 1; } .lb-prev { grid-row: 2; justify-self: start; } .lb-next { grid-row: 2; justify-self: end; } }
+[data-zoom] { cursor: zoom-in; }
+/* Revolving art wheel: pieces stand on a turning ring */
+.ring-wrap { --w: 420px; --r: 480px; position: relative; margin-top: 30px; }
+.ring-stage { position: relative; height: calc(var(--w) * 0.9 + 48px); perspective: 1400px; perspective-origin: 50% 30%; overflow: hidden; touch-action: pan-y; cursor: pointer; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.ring-stage.dragging { cursor: grabbing; }
+.ring { position: absolute; left: 50%; top: 24px; width: var(--w); height: calc(var(--w) * 0.9); margin-left: calc(var(--w) / -2); transform-style: preserve-3d; transform: translateZ(calc(var(--r) * -1)) rotateY(var(--rot, 0deg)); }
+.ring-item { position: absolute; inset: 0; margin: 0; transform: rotateY(var(--a)) translateZ(var(--r)); backface-visibility: hidden; }
+.ring-item .art-frame { width: 100%; height: 100%; box-shadow: 0 14px 30px rgba(0, 0, 0, 0.55); }
+.ring-item.front .art-frame { border-color: var(--gold); box-shadow: 0 14px 30px rgba(0, 0, 0, 0.55), 0 0 18px rgba(217, 181, 106, 0.25); }
+.ring-item .art-frame:hover { transform: none; }
+.ring-item.front .art-frame { cursor: zoom-in; }
+.ring-item .art-frame { padding: 18px; }
+.ring-item .art-frame img { inset: 18px; width: calc(100% - 36px); height: calc(100% - 36px); }
+.ring-arrow { position: absolute; z-index: 3; top: calc(24px + var(--w) * 0.45); transform: translateY(-50%); width: 46px; height: 46px; border-radius: 50%; background: rgba(6, 10, 24, 0.7); font-size: 1.1rem; }
+.ring-arrow:active { transform: translateY(-50%) scale(0.92); }
+.ring-prev { left: 0; }
+.ring-next { right: 0; }
+.ring-cap { display: grid; justify-items: center; gap: 2px; margin-top: 4px; text-align: center; transition: opacity 0.25s ease; }
+.ring-cap.fade { opacity: 0; }
+.ring-count { margin-top: 4px; font-family: var(--display); font-size: 10.5px; letter-spacing: 0.2em; color: var(--muted); }
+.art-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 30px 26px; margin-top: 28px; }
+.art-panels .actions { margin-top: 30px; }
+.art-piece { margin: 0; }
+.art-frame { display: block; padding: 14px; border: 1px solid var(--line); background: rgba(6, 10, 24, 0.55); transition: border-color 0.25s ease, transform 0.25s ease; }
+.art-frame:hover, .art-frame:focus-visible { border-color: var(--gold); transform: translateY(-3px); }
+.art-frame { position: relative; aspect-ratio: 10 / 9; }
+.art-frame img { position: absolute; inset: 14px; width: calc(100% - 28px); height: calc(100% - 28px); object-fit: contain; }
+.art-frame.pixel img { image-rendering: pixelated; }
+.art-grid.creatures { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+.art-piece.wide { grid-column: 1 / -1; }
+@media (max-width: 640px) { .art-grid.creatures { grid-template-columns: 1fr; } }
+.art-frame.natural { aspect-ratio: auto; padding: 0; overflow: hidden; background: #0a0d1c; }
+.art-frame.natural img { position: static; display: block; width: 100%; height: auto; transition: transform 0.4s ease; }
+.art-frame.natural:hover img, .art-frame.natural:focus-visible img { transform: scale(1.02); }
+.art-grid.concepts { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); align-items: start; }
+.art-frame.free { aspect-ratio: 3 / 4; padding: 0; overflow: hidden; background: #0a0d1c; }
+.art-frame.free img { inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 0.4s ease; }
+.art-frame.free:hover img, .art-frame.free:focus-visible img { transform: scale(1.03); }
+.art-piece figcaption { display: grid; gap: 2px; margin-top: 12px; }
+.art-name { font-family: var(--display); font-size: 1.05rem; letter-spacing: 0.04em; color: var(--ink); }
+.art-meta { font-style: italic; font-size: 0.92rem; color: var(--muted); }
+.g-lines line { stroke: rgba(217, 181, 106, 0.55); stroke-width: 1; stroke-dasharray: 160; stroke-dashoffset: 0; }
+.g-dots circle { fill: var(--ink); }
+.g-dots circle:first-child { fill: var(--gold); }
+.plate.active .g-lines line { animation: trace 1.1s ease-out both; }
+@keyframes trace { from { stroke-dashoffset: 160; } to { stroke-dashoffset: 0; } }
+.plate-glyph .cat { display: block; margin-top: 6px; font-family: var(--display); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+.panels .plate h3, .panels .plate .tagline { padding-right: 150px; }
+.panels .plate .blurb { max-width: 56ch; }
+@media (max-width: 720px) {
+  .tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 8px; }
+  .tabs::before, .tabs::after { display: none; }
+  .plate-glyph { position: static; width: 110px; margin: -6px 0 14px; text-align: left; }
+  .plate-glyph svg { width: 110px; }
+  .panels .plate h3, .panels .plate .tagline { padding-right: 0; }
+}
+
+/* Motion: drifting nebulae, constellations that draw themselves, a shimmer on the headline */
+.nebula { position: fixed; inset: -20%; z-index: 0; pointer-events: none; }
+.nebula i { position: absolute; border-radius: 50%; filter: blur(70px); }
+.nebula i:nth-child(1) { width: 46vw; height: 34vw; right: 8%; top: 6%; background: rgba(52, 78, 178, 0.30); animation: drift1 38s ease-in-out infinite alternate; }
+.nebula i:nth-child(2) { width: 38vw; height: 30vw; left: 10%; top: 42%; background: rgba(26, 96, 122, 0.22); animation: drift2 46s ease-in-out infinite alternate; }
+.nebula i:nth-child(3) { width: 26vw; height: 22vw; left: 46%; top: 60%; background: rgba(120, 84, 160, 0.14); animation: drift1 54s ease-in-out infinite alternate-reverse; }
+@keyframes drift1 { from { transform: translate(0, 0) scale(1); } to { transform: translate(-9vw, 6vw) scale(1.18); } }
+@keyframes drift2 { from { transform: translate(0, 0) scale(1.1); } to { transform: translate(8vw, -7vw) scale(0.92); } }
+h1 em {
+  background: linear-gradient(100deg, var(--gold) 0%, var(--gold) 40%, #fff4d6 50%, var(--gold) 60%, var(--gold) 100%);
+  background-size: 260% 100%; -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; animation: shimmer 7s ease-in-out infinite;
+}
+@keyframes shimmer { 0%, 55% { background-position: 100% 0; } 100% { background-position: 0% 0; } }
+.const svg.anim .lines line { stroke-dasharray: 1; animation: draw 0.9s ease-out both; }
+@keyframes draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.spark { fill: #fff4d6; opacity: 0; pointer-events: none; filter: drop-shadow(0 0 4px rgba(255, 228, 160, 0.95)); }
+.s-link .pt { transform-box: fill-box; transform-origin: center; animation: pulse 3.6s ease-in-out infinite; }
+.s-link:nth-of-type(2n) .pt { animation-delay: -1.3s; }
+.s-link:nth-of-type(3n) .pt { animation-delay: -2.4s; }
+.s-link:hover .pt, .s-link:focus-visible .pt { animation: none; transform: scale(1.45); transition: transform 0.2s ease, fill 0.2s ease; }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.22); } }
+
+@media (max-width: 820px) {
+  .hero { padding: 24px 0 24px; }
+  section { padding: 44px 0; }
+  .plate { padding: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .glow, .nebula i, h1 em, .s-link .pt, .const svg.anim .lines line { animation: none; }
+  .btn, .tab, .tab-star, .tab-name, .tabs::after { transition: none; }
+  .routed .panels .plate.active, .plate.active .g-lines line { animation: none; }
+  .w-ring, .w-const, .wheel.in .g-lines line, .ha-item:hover .g-lines line, .routed .view.active, .mg-motes circle, .mg-glint { animation: none; }
+  .w-turn, .w-tilt, .w-const, .feat-name, .feat-sub, .feat-btn, .feat-dot::after, .feat-state { transition: none; }
+}
+</style>
+</head>
+<body>
+<div class="nebula" aria-hidden="true"><i></i><i></i><i></i></div>
+<canvas id="sky" aria-hidden="true"></canvas>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="star4" viewBox="0 0 14 14"><path d="M7 0 L8.6 5.4 L14 7 L8.6 8.6 L7 14 L5.4 8.6 L0 7 L5.4 5.4 Z"/></symbol>
+</svg>
+
+<div class="wrap">
+
+  <header class="top">
+    <a class="id" href="#home">Edward (Shengyu) Liu</a>
+    <nav aria-label="Pages">
+      <a href="#home" data-view="home">About me</a>
+      <a href="#portfolio" data-view="portfolio">Projects</a>
+      <a href="#art" data-view="art">Art</a>
+      <a href="#resume" data-view="resume">Résumé</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Page: Home -->
+    <div class="view" id="view-home">
+      <div class="hero">
+        <div class="hero-text">
+        <p class="label">Game designer · Los Angeles</p>
+        <figure class="hero-quote"><blockquote><h1>&ldquo;Make your wonderful dream a reality, <em>it will become your truth.</em>&rdquo;</h1></blockquote><figcaption>&mdash; N, <cite>Pokémon Black and White</cite></figcaption></figure>
+        <p class="lede">I'm a <strong>Computer Science (Games) student at USC</strong>. I turn my experiences as a player into games that intrigue and inspire, designing the combat, progression and core loops that make them work. I'm currently the design lead on <strong>Final Spark</strong>, a 3D roguelike auto-battler, and before that I was an assistant game designer and project manager on <strong>Celestine: One to Eleven</strong>.</p>
+        <div class="actions hero-actions"><a class="btn" href="#work">See my work</a><a class="btn ghost" href="https://souvreign.itch.io/scarlet-lily">Play Scarlet Lily</a></div>
+        </div>
+        <section class="feat" aria-roledescription="carousel" aria-label="Projects">
+          <div class="feat-head"><span class="feat-title">Projects</span></div>
+          <a class="wheel" href="#portfolio-final-spark">
+            <span class="w-tilt">
+              <svg class="w-lens" viewBox="-145 -135 290 270" aria-hidden="true"><defs><linearGradient id="mg-metal" x1="-121" y1="-121" x2="121" y2="121" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#d8b48a"/><stop offset="0.16" stop-color="#9a6a45"/><stop offset="0.36" stop-color="#4f2f1d"/><stop offset="0.52" stop-color="#7d5233"/><stop offset="0.7" stop-color="#3a2416"/><stop offset="0.86" stop-color="#8b603d"/><stop offset="1" stop-color="#b98d62"/></linearGradient><linearGradient id="mg-chamfer" x1="121" y1="121" x2="-121" y2="-121" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#c49a70"/><stop offset="0.45" stop-color="#4a2c1a"/><stop offset="1" stop-color="#1e120a"/></linearGradient><linearGradient id="mg-lip" x1="-121" y1="-121" x2="121" y2="121" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#f4dcb8" stop-opacity="0.7"/><stop offset="0.5" stop-color="#f4dcb8" stop-opacity="0.05"/><stop offset="1" stop-color="#f4dcb8" stop-opacity="0.3"/></linearGradient><linearGradient id="mg-brass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#cdb07a"/><stop offset="0.45" stop-color="#7d6436"/><stop offset="1" stop-color="#2e2410"/></linearGradient><radialGradient id="mg-pin" cx="0.35" cy="0.35" r="0.75"><stop offset="0" stop-color="#e2c99c"/><stop offset="0.6" stop-color="#6e5530"/><stop offset="1" stop-color="#241a0b"/></radialGradient><radialGradient id="mg-t-blue" cx="0" cy="0" r="108" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#080d22" stop-opacity="0.96"/><stop offset="0.82" stop-color="#070b1d" stop-opacity="0.95"/><stop offset="0.95" stop-color="#9fb8ff" stop-opacity="0.12"/><stop offset="1" stop-color="#000" stop-opacity="0.75"/></radialGradient><radialGradient id="mg-t-green" cx="0" cy="0" r="108" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#080d22" stop-opacity="0.96"/><stop offset="0.82" stop-color="#070b1d" stop-opacity="0.95"/><stop offset="0.95" stop-color="#7fd6a8" stop-opacity="0.12"/><stop offset="1" stop-color="#000" stop-opacity="0.75"/></radialGradient><radialGradient id="mg-t-amber" cx="0" cy="0" r="108" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#080d22" stop-opacity="0.96"/><stop offset="0.82" stop-color="#070b1d" stop-opacity="0.95"/><stop offset="0.95" stop-color="#e8b86a" stop-opacity="0.12"/><stop offset="1" stop-color="#000" stop-opacity="0.75"/></radialGradient><radialGradient id="mg-t-violet" cx="0" cy="0" r="108" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#080d22" stop-opacity="0.96"/><stop offset="0.82" stop-color="#070b1d" stop-opacity="0.95"/><stop offset="0.95" stop-color="#b7a2ff" stop-opacity="0.12"/><stop offset="1" stop-color="#000" stop-opacity="0.75"/></radialGradient><radialGradient id="mg-shine" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#fff" stop-opacity="0.13"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><linearGradient id="mg-glint" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff" stop-opacity="0.07"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><clipPath id="mg-clip"><circle r="107"/></clipPath></defs><g class="mg-fan"><g class="mg-lens" data-tint="violet"><line x1="-112.4" y1="42.1" x2="-128" y2="48" stroke="url(#mg-brass)" stroke-width="5" stroke-linecap="round"/><path d="M 121 0 A 121 121 0 1 0 -121 0 A 121 121 0 1 0 121 0 Z M 108 0 A 108 108 0 1 1 -108 0 A 108 108 0 1 1 108 0 Z" fill="url(#mg-metal)" fill-rule="evenodd"/><path d="M 111 0 A 111 111 0 1 0 -111 0 A 111 111 0 1 0 111 0 Z M 108 0 A 108 108 0 1 1 -108 0 A 108 108 0 1 1 108 0 Z" fill="url(#mg-chamfer)" fill-rule="evenodd"/><g class="mg-knurl"><line x1="119.50" y1="0.00" x2="121.00" y2="0.00"/><line x1="119.39" y1="5.21" x2="120.88" y2="5.28"/><line x1="119.05" y1="10.42" x2="120.54" y2="10.55"/><line x1="118.48" y1="15.60" x2="119.96" y2="15.79"/><line x1="117.68" y1="20.75" x2="119.16" y2="21.01"/><line x1="116.67" y1="25.86" x2="118.13" y2="26.19"/><line x1="115.43" y1="30.93" x2="116.88" y2="31.32"/><line x1="113.97" y1="35.93" x2="115.40" y2="36.39"/><line x1="112.29" y1="40.87" x2="113.70" y2="41.38"/><line x1="110.40" y1="45.73" x2="111.79" y2="46.30"/><line x1="108.30" y1="50.50" x2="109.66" y2="51.14"/><line x1="106.00" y1="55.18" x2="107.33" y2="55.87"/><line x1="103.49" y1="59.75" x2="104.79" y2="60.50"/><line x1="100.79" y1="64.21" x2="102.05" y2="65.01"/><line x1="97.89" y1="68.54" x2="99.12" y2="69.40"/><line x1="94.81" y1="72.75" x2="96.00" y2="73.66"/><line x1="91.54" y1="76.81" x2="92.69" y2="77.78"/><line x1="88.10" y1="80.73" x2="89.21" y2="81.75"/><line x1="84.50" y1="84.50" x2="85.56" y2="85.56"/><line x1="80.73" y1="88.10" x2="81.75" y2="89.21"/><line x1="76.81" y1="91.54" x2="77.78" y2="92.69"/><line x1="72.75" y1="94.81" x2="73.66" y2="96.00"/><line x1="68.54" y1="97.89" x2="69.40" y2="99.12"/><line x1="64.21" y1="100.79" x2="65.01" y2="102.05"/><line x1="59.75" y1="103.49" x2="60.50" y2="104.79"/><line x1="55.18" y1="106.00" x2="55.87" y2="107.33"/><line x1="50.50" y1="108.30" x2="51.14" y2="109.66"/><line x1="45.73" y1="110.40" x2="46.30" y2="111.79"/><line x1="40.87" y1="112.29" x2="41.38" y2="113.70"/><line x1="35.93" y1="113.97" x2="36.39" y2="115.40"/><line x1="30.93" y1="115.43" x2="31.32" y2="116.88"/><line x1="25.86" y1="116.67" x2="26.19" y2="118.13"/><line x1="20.75" y1="117.68" x2="21.01" y2="119.16"/><line x1="15.60" y1="118.48" x2="15.79" y2="119.96"/><line x1="10.42" y1="119.05" x2="10.55" y2="120.54"/><line x1="5.21" y1="119.39" x2="5.28" y2="120.88"/><line x1="0.00" y1="119.50" x2="0.00" y2="121.00"/><line x1="-5.21" y1="119.39" x2="-5.28" y2="120.88"/><line x1="-10.42" y1="119.05" x2="-10.55" y2="120.54"/><line x1="-15.60" y1="118.48" x2="-15.79" y2="119.96"/><line x1="-20.75" y1="117.68" x2="-21.01" y2="119.16"/><line x1="-25.86" y1="116.67" x2="-26.19" y2="118.13"/><line x1="-30.93" y1="115.43" x2="-31.32" y2="116.88"/><line x1="-35.93" y1="113.97" x2="-36.39" y2="115.40"/><line x1="-40.87" y1="112.29" x2="-41.38" y2="113.70"/><line x1="-45.73" y1="110.40" x2="-46.30" y2="111.79"/><line x1="-50.50" y1="108.30" x2="-51.14" y2="109.66"/><line x1="-55.18" y1="106.00" x2="-55.87" y2="107.33"/><line x1="-59.75" y1="103.49" x2="-60.50" y2="104.79"/><line x1="-64.21" y1="100.79" x2="-65.01" y2="102.05"/><line x1="-68.54" y1="97.89" x2="-69.40" y2="99.12"/><line x1="-72.75" y1="94.81" x2="-73.66" y2="96.00"/><line x1="-76.81" y1="91.54" x2="-77.78" y2="92.69"/><line x1="-80.73" y1="88.10" x2="-81.75" y2="89.21"/><line x1="-84.50" y1="84.50" x2="-85.56" y2="85.56"/><line x1="-88.10" y1="80.73" x2="-89.21" y2="81.75"/><line x1="-91.54" y1="76.81" x2="-92.69" y2="77.78"/><line x1="-94.81" y1="72.75" x2="-96.00" y2="73.66"/><line x1="-97.89" y1="68.54" x2="-99.12" y2="69.40"/><line x1="-100.79" y1="64.21" x2="-102.05" y2="65.01"/><line x1="-103.49" y1="59.75" x2="-104.79" y2="60.50"/><line x1="-106.00" y1="55.18" x2="-107.33" y2="55.87"/><line x1="-108.30" y1="50.50" x2="-109.66" y2="51.14"/><line x1="-110.40" y1="45.73" x2="-111.79" y2="46.30"/><line x1="-112.29" y1="40.87" x2="-113.70" y2="41.38"/><line x1="-113.97" y1="35.93" x2="-115.40" y2="36.39"/><line x1="-115.43" y1="30.93" x2="-116.88" y2="31.32"/><line x1="-116.67" y1="25.86" x2="-118.13" y2="26.19"/><line x1="-117.68" y1="20.75" x2="-119.16" y2="21.01"/><line x1="-118.48" y1="15.60" x2="-119.96" y2="15.79"/><line x1="-119.05" y1="10.42" x2="-120.54" y2="10.55"/><line x1="-119.39" y1="5.21" x2="-120.88" y2="5.28"/><line x1="-119.50" y1="0.00" x2="-121.00" y2="0.00"/><line x1="-119.39" y1="-5.21" x2="-120.88" y2="-5.28"/><line x1="-119.05" y1="-10.42" x2="-120.54" y2="-10.55"/><line x1="-118.48" y1="-15.60" x2="-119.96" y2="-15.79"/><line x1="-117.68" y1="-20.75" x2="-119.16" y2="-21.01"/><line x1="-116.67" y1="-25.86" x2="-118.13" y2="-26.19"/><line x1="-115.43" y1="-30.93" x2="-116.88" y2="-31.32"/><line x1="-113.97" y1="-35.93" x2="-115.40" y2="-36.39"/><line x1="-112.29" y1="-40.87" x2="-113.70" y2="-41.38"/><line x1="-110.40" y1="-45.73" x2="-111.79" y2="-46.30"/><line x1="-108.30" y1="-50.50" x2="-109.66" y2="-51.14"/><line x1="-106.00" y1="-55.18" x2="-107.33" y2="-55.87"/><line x1="-103.49" y1="-59.75" x2="-104.79" y2="-60.50"/><line x1="-100.79" y1="-64.21" x2="-102.05" y2="-65.01"/><line x1="-97.89" y1="-68.54" x2="-99.12" y2="-69.40"/><line x1="-94.81" y1="-72.75" x2="-96.00" y2="-73.66"/><line x1="-91.54" y1="-76.81" x2="-92.69" y2="-77.78"/><line x1="-88.10" y1="-80.73" x2="-89.21" y2="-81.75"/><line x1="-84.50" y1="-84.50" x2="-85.56" y2="-85.56"/><line x1="-80.73" y1="-88.10" x2="-81.75" y2="-89.21"/><line x1="-76.81" y1="-91.54" x2="-77.78" y2="-92.69"/><line x1="-72.75" y1="-94.81" x2="-73.66" y2="-96.00"/><line x1="-68.54" y1="-97.89" x2="-69.40" y2="-99.12"/><line x1="-64.21" y1="-100.79" x2="-65.01" y2="-102.05"/><line x1="-59.75" y1="-103.49" x2="-60.50" y2="-104.79"/><line x1="-55.18" y1="-106.00" x2="-55.87" y2="-107.33"/><line x1="-50.50" y1="-108.30" x2="-51.14" y2="-109.66"/><line x1="-45.73" y1="-110.40" x2="-46.30" y2="-111.79"/><line x1="-40.87" y1="-112.29" x2="-41.38" y2="-113.70"/><line x1="-35.93" y1="-113.97" x2="-36.39" y2="-115.40"/><line x1="-30.93" y1="-115.43" x2="-31.32" y2="-116.88"/><line x1="-25.86" y1="-116.67" x2="-26.19" y2="-118.13"/><line x1="-20.75" y1="-117.68" x2="-21.01" y2="-119.16"/><line x1="-15.60" y1="-118.48" x2="-15.79" y2="-119.96"/><line x1="-10.42" y1="-119.05" x2="-10.55" y2="-120.54"/><line x1="-5.21" y1="-119.39" x2="-5.28" y2="-120.88"/><line x1="-0.00" y1="-119.50" x2="-0.00" y2="-121.00"/><line x1="5.21" y1="-119.39" x2="5.28" y2="-120.88"/><line x1="10.42" y1="-119.05" x2="10.55" y2="-120.54"/><line x1="15.60" y1="-118.48" x2="15.79" y2="-119.96"/><line x1="20.75" y1="-117.68" x2="21.01" y2="-119.16"/><line x1="25.86" y1="-116.67" x2="26.19" y2="-118.13"/><line x1="30.93" y1="-115.43" x2="31.32" y2="-116.88"/><line x1="35.93" y1="-113.97" x2="36.39" y2="-115.40"/><line x1="40.87" y1="-112.29" x2="41.38" y2="-113.70"/><line x1="45.73" y1="-110.40" x2="46.30" y2="-111.79"/><line x1="50.50" y1="-108.30" x2="51.14" y2="-109.66"/><line x1="55.18" y1="-106.00" x2="55.87" y2="-107.33"/><line x1="59.75" y1="-103.49" x2="60.50" y2="-104.79"/><line x1="64.21" y1="-100.79" x2="65.01" y2="-102.05"/><line x1="68.54" y1="-97.89" x2="69.40" y2="-99.12"/><line x1="72.75" y1="-94.81" x2="73.66" y2="-96.00"/><line x1="76.81" y1="-91.54" x2="77.78" y2="-92.69"/><line x1="80.73" y1="-88.10" x2="81.75" y2="-89.21"/><line x1="84.50" y1="-84.50" x2="85.56" y2="-85.56"/><line x1="88.10" y1="-80.73" x2="89.21" y2="-81.75"/><line x1="91.54" y1="-76.81" x2="92.69" y2="-77.78"/><line x1="94.81" y1="-72.75" x2="96.00" y2="-73.66"/><line x1="97.89" y1="-68.54" x2="99.12" y2="-69.40"/><line x1="100.79" y1="-64.21" x2="102.05" y2="-65.01"/><line x1="103.49" y1="-59.75" x2="104.79" y2="-60.50"/><line x1="106.00" y1="-55.18" x2="107.33" y2="-55.87"/><line x1="108.30" y1="-50.50" x2="109.66" y2="-51.14"/><line x1="110.40" y1="-45.73" x2="111.79" y2="-46.30"/><line x1="112.29" y1="-40.87" x2="113.70" y2="-41.38"/><line x1="113.97" y1="-35.93" x2="115.40" y2="-36.39"/><line x1="115.43" y1="-30.93" x2="116.88" y2="-31.32"/><line x1="116.67" y1="-25.86" x2="118.13" y2="-26.19"/><line x1="117.68" y1="-20.75" x2="119.16" y2="-21.01"/><line x1="118.48" y1="-15.60" x2="119.96" y2="-15.79"/><line x1="119.05" y1="-10.42" x2="120.54" y2="-10.55"/><line x1="119.39" y1="-5.21" x2="120.88" y2="-5.28"/></g><circle r="120.6" fill="none" stroke="url(#mg-lip)" stroke-width="0.8"/><circle r="111" fill="none" stroke="#000" stroke-opacity="0.35" stroke-width="0.6"/><g class="mg-pins" fill="url(#mg-pin)"><circle cx="0.0" cy="-114.5" r="1.6"/><circle cx="99.2" cy="57.2" r="1.6"/><circle cx="-99.2" cy="57.2" r="1.6"/></g><circle r="108" fill="url(#mg-t-violet)"/><circle r="106.5" fill="none" stroke="#b7a2ff" stroke-opacity="0.18" stroke-width="1"/><g class="mg-scale"><line x1="106.0" y1="0.0" x2="100.0" y2="0.0"/><line x1="105.6" y1="9.2" x2="102.6" y2="9.0"/><line x1="104.4" y1="18.4" x2="101.4" y2="17.9"/><line x1="102.4" y1="27.4" x2="99.5" y2="26.7"/><line x1="99.6" y1="36.3" x2="96.8" y2="35.2"/><line x1="96.1" y1="44.8" x2="93.3" y2="43.5"/><line x1="91.8" y1="53.0" x2="86.6" y2="50.0"/><line x1="86.8" y1="60.8" x2="84.4" y2="59.1"/><line x1="81.2" y1="68.1" x2="78.9" y2="66.2"/><line x1="75.0" y1="75.0" x2="72.8" y2="72.8"/><line x1="68.1" y1="81.2" x2="66.2" y2="78.9"/><line x1="60.8" y1="86.8" x2="59.1" y2="84.4"/><line x1="53.0" y1="91.8" x2="50.0" y2="86.6"/><line x1="44.8" y1="96.1" x2="43.5" y2="93.3"/><line x1="36.3" y1="99.6" x2="35.2" y2="96.8"/><line x1="27.4" y1="102.4" x2="26.7" y2="99.5"/><line x1="18.4" y1="104.4" x2="17.9" y2="101.4"/><line x1="9.2" y1="105.6" x2="9.0" y2="102.6"/><line x1="0.0" y1="106.0" x2="0.0" y2="100.0"/><line x1="-9.2" y1="105.6" x2="-9.0" y2="102.6"/><line x1="-18.4" y1="104.4" x2="-17.9" y2="101.4"/><line x1="-27.4" y1="102.4" x2="-26.7" y2="99.5"/><line x1="-36.3" y1="99.6" x2="-35.2" y2="96.8"/><line x1="-44.8" y1="96.1" x2="-43.5" y2="93.3"/><line x1="-53.0" y1="91.8" x2="-50.0" y2="86.6"/><line x1="-60.8" y1="86.8" x2="-59.1" y2="84.4"/><line x1="-68.1" y1="81.2" x2="-66.2" y2="78.9"/><line x1="-75.0" y1="75.0" x2="-72.8" y2="72.8"/><line x1="-81.2" y1="68.1" x2="-78.9" y2="66.2"/><line x1="-86.8" y1="60.8" x2="-84.4" y2="59.1"/><line x1="-91.8" y1="53.0" x2="-86.6" y2="50.0"/><line x1="-96.1" y1="44.8" x2="-93.3" y2="43.5"/><line x1="-99.6" y1="36.3" x2="-96.8" y2="35.2"/><line x1="-102.4" y1="27.4" x2="-99.5" y2="26.7"/><line x1="-104.4" y1="18.4" x2="-101.4" y2="17.9"/><line x1="-105.6" y1="9.2" x2="-102.6" y2="9.0"/><line x1="-106.0" y1="0.0" x2="-100.0" y2="0.0"/><line x1="-105.6" y1="-9.2" x2="-102.6" y2="-9.0"/><line x1="-104.4" y1="-18.4" x2="-101.4" y2="-17.9"/><line x1="-102.4" y1="-27.4" x2="-99.5" y2="-26.7"/><line x1="-99.6" y1="-36.3" x2="-96.8" y2="-35.2"/><line x1="-96.1" y1="-44.8" x2="-93.3" y2="-43.5"/><line x1="-91.8" y1="-53.0" x2="-86.6" y2="-50.0"/><line x1="-86.8" y1="-60.8" x2="-84.4" y2="-59.1"/><line x1="-81.2" y1="-68.1" x2="-78.9" y2="-66.2"/><line x1="-75.0" y1="-75.0" x2="-72.8" y2="-72.8"/><line x1="-68.1" y1="-81.2" x2="-66.2" y2="-78.9"/><line x1="-60.8" y1="-86.8" x2="-59.1" y2="-84.4"/><line x1="-53.0" y1="-91.8" x2="-50.0" y2="-86.6"/><line x1="-44.8" y1="-96.1" x2="-43.5" y2="-93.3"/><line x1="-36.3" y1="-99.6" x2="-35.2" y2="-96.8"/><line x1="-27.4" y1="-102.4" x2="-26.7" y2="-99.5"/><line x1="-18.4" y1="-104.4" x2="-17.9" y2="-101.4"/><line x1="-9.2" y1="-105.6" x2="-9.0" y2="-102.6"/><line x1="-0.0" y1="-106.0" x2="-0.0" y2="-100.0"/><line x1="9.2" y1="-105.6" x2="9.0" y2="-102.6"/><line x1="18.4" y1="-104.4" x2="17.9" y2="-101.4"/><line x1="27.4" y1="-102.4" x2="26.7" y2="-99.5"/><line x1="36.3" y1="-99.6" x2="35.2" y2="-96.8"/><line x1="44.8" y1="-96.1" x2="43.5" y2="-93.3"/><line x1="53.0" y1="-91.8" x2="50.0" y2="-86.6"/><line x1="60.8" y1="-86.8" x2="59.1" y2="-84.4"/><line x1="68.1" y1="-81.2" x2="66.2" y2="-78.9"/><line x1="75.0" y1="-75.0" x2="72.8" y2="-72.8"/><line x1="81.2" y1="-68.1" x2="78.9" y2="-66.2"/><line x1="86.8" y1="-60.8" x2="84.4" y2="-59.1"/><line x1="91.8" y1="-53.0" x2="86.6" y2="-50.0"/><line x1="96.1" y1="-44.8" x2="93.3" y2="-43.5"/><line x1="99.6" y1="-36.3" x2="96.8" y2="-35.2"/><line x1="102.4" y1="-27.4" x2="99.5" y2="-26.7"/><line x1="104.4" y1="-18.4" x2="101.4" y2="-17.9"/><line x1="105.6" y1="-9.2" x2="102.6" y2="-9.0"/></g><g class="mg-nums"><text transform="rotate(0) translate(0 -94)" text-anchor="middle">0</text><text transform="rotate(30) translate(0 -94)" text-anchor="middle">30</text><text transform="rotate(60) translate(0 -94)" text-anchor="middle">60</text><text transform="rotate(90) translate(0 -94)" text-anchor="middle">90</text><text transform="rotate(120) translate(0 -94)" text-anchor="middle">120</text><text transform="rotate(150) translate(0 -94)" text-anchor="middle">150</text><text transform="rotate(180) translate(0 -94)" text-anchor="middle">180</text><text transform="rotate(210) translate(0 -94)" text-anchor="middle">210</text><text transform="rotate(240) translate(0 -94)" text-anchor="middle">240</text><text transform="rotate(270) translate(0 -94)" text-anchor="middle">270</text><text transform="rotate(300) translate(0 -94)" text-anchor="middle">300</text><text transform="rotate(330) translate(0 -94)" text-anchor="middle">330</text></g><g class="mg-reticle"><line x1="-88" x2="88"/><line y1="-88" y2="88"/><circle r="52"/></g></g><g class="mg-lens" data-tint="amber"><line x1="-112.4" y1="42.1" x2="-128" y2="48" stroke="url(#mg-brass)" stroke-width="5" stroke-linecap="round"/><path d="M 121 0 A 121 121 0 1 0 -121 0 A 121 121 0 1 0 121 0 Z M 108 0 A 108 108 0 1 1 -108 0 A 108 108 0 1 1 108 0 Z" fill="url(#mg-metal)" fill-rule="evenodd"/><path d="M 111 0 A 111 111 0 1 0 -111 0 A 111 111 0 1 0 111 0 Z M 108 0 A 108 108 0 1 1 -108 0 A 108 108 0 1 1 108 0 Z" fill="url(#mg-chamfer)" fill-rule="evenodd"/><g class="mg-knurl"><line x1="119.50" y1="0.00" x2="121.00" y2="0.00"/><line x1="119.39" y1="5.21" x2="120.88" y2="5.28"/><line x1="119.05" y1="10.42" x2="120.54" y2="10.55"/><line x1="118.48" y1="15.60" x2="119.96" y2="15.79"/><line x1="117.68" y1="20.75" x2="119.16" y2="21.01"/><line x1="116.67" y1="25.86" x2="118.13" y2="26.19"/><line x1="115.43" y1="30.93" x2="116.88" y2="31.32"/><line x1="113.97" y1="35.93" x2="115.40" y2="36.39"/><line x1="112.29" y1="40.87" x2="113.70" y2="41.38"/><line x1="110.40" y1="45.73" x2="111.79" y2="46.30"/><line x1="108.30" y1="50.50" x2="109.66" y2="51.14"/><line x1="106.00" y1="55.18" x2="107.33" y2="55.87"/><line x1="103.49" y1="59.75" x2="104.79" y2="60.50"/><line x1="100.79" y1="64.21" x2="102.05" y2="65.01"/><line x1="97.89" y1="68.54" x2="99.12" y2="69.40"/><line x1="94.81" y1="72.75" x2="96.00" y2="73.66"/><line x1="91.54" y1="76.81" x2="92.69" y2="77.78"/><line x1="88.10" y1="80.73" x2="89.21" y2="81.75"/><line x1="84.50" y1="84.50" x2="85.56" y2="85.56"/><line x1="80.73" y1="88.10" x2="81.75" y2="89.21"/><line x1="76.81" y1="91.54" x2="77.78" y2="92.69"/><line x1="72.75" y1="94.81" x2="73.66" y2="96.00"/><line x1="68.54" y1="97.89" x2="69.40" y2="99.12"/><line x1="64.21" y1="100.79" x2="65.01" y2="102.05"/><line x1="59.75" y1="103.49" x2="60.50" y2="104.79"/><line x1="55.18" y1="106.00" x2="55.87" y2="107.33"/><line x1="50.50" y1="108.30" x2="51.14" y2="109.66"/><line x1="45.73" y1="110.40" x2="46.30" y2="111.79"/><line x1="40.87" y1="112.29" x2="41.38" y2="113.70"/><line x1="35.93" y1="113.97" x2="36.39" y2="115.40"/><line x1="30.93" y1="115.43" x2="31.32" y2="116.88"/><line x1="25.86" y1="116.67" x2="26.19" y2="118.13"/><line x1="20.75" y1="117.68" x2="21.01" y2="119.16"/><line x1="15.60" y1="118.48" x2="15.79" y2="119.96"/><line x1="10.42" y1="119.05" x2="10.55" y2="120.54"/><line x1="5.21" y1="119.39" x2="5.28" y2="120.88"/><line x1="0.00" y1="119.50" x2="0.00" y2="121.00"/><line x1="-5.21" y1="119.39" x2="-5.28" y2="120.88"/><line x1="-10.42" y1="119.05" x2="-10.55" y2="120.54"/><line x1="-15.60" y1="118.48" x2="-15.79" y2="119.96"/><line x1="-20.75" y1="117.68" x2="-21.01" y2="119.16"/><line x1="-25.86" y1="116.67" x2="-26.19" y2="118.13"/><line x1="-30.93" y1="115.43" x2="-31.32" y2="116.88"/><line x1="-35.93" y1="113.97" x2="-36.39" y2="115.40"/><line x1="-40.87" y1="112.29" x2="-41.38" y2="113.70"/><line x1="-45.73" y1="110.40" x2="-46.30" y2="111.79"/><line x1="-50.50" y1="108.30" x2="-51.14" y2="109.66"/><line x1="-55.18" y1="106.00" x2="-55.87" y2="107.33"/><line x1="-59.75" y1="103.49" x2="-60.50" y2="104.79"/><line x1="-64.21" y1="100.79" x2="-65.01" y2="102.05"/><line x1="-68.54" y1="97.89" x2="-69.40" y2="99.12"/><line x1="-72.75" y1="94.81" x2="-73.66" y2="96.00"/><line x1="-76.81" y1="91.54" x2="-77.78" y2="92.69"/><line x1="-80.73" y1="88.10" x2="-81.75" y2="89.21"/><line x1="-84.50" y1="84.50" x2="-85.56" y2="85.56"/><line x1="-88.10" y1="80.73" x2="-89.21" y2="81.75"/><line x1="-91.54" y1="76.81" x2="-92.69" y2="77.78"/><line x1="-94.81" y1="72.75" x2="-96.00" y2="73.66"/><line x1="-97.89" y1="68.54" x2="-99.12" y2="69.40"/><line x1="-100.79" y1="64.21" x2="-102.05" y2="65.01"/><line x1="-103.49" y1="59.75" x2="-104.79" y2="60.50"/><line x1="-106.00" y1="55.18" x2="-107.33" y2="55.87"/><line x1="-108.30" y1="50.50" x2="-109.66" y2="51.14"/><line x1="-110.40" y1="45.73" x2="-111.79" y2="46.30"/><line x1="-112.29" y1="40.87" x2="-113.70" y2="41.38"/><line x1="-113.97" y1="35.93" x2="-115.40" y2="36.39"/><line x1="-115.43" y1="30.93" x2="-116.88" y2="31.32"/><line x1="-116.67" y1="25.86" x2="-118.13" y2="26.19"/><line x1="-117.68" y1="20.75" x2="-119.16" y2="21.01"/><line x1="-118.48" y1="15.60" x2="-119.96" y2="15.79"/><line x1="-119.05" y1="10.42" x2="-120.54" y2="10.55"/><line x1="-119.39" y1="5.21" x2="-120.88" y2="5.28"/><line x1="-119.50" y1="0.00" x2="-121.00" y2="0.00"/><line x1="-119.39" y1="-5.21" x2="-120.88" y2="-5.28"/><line x1="-119.05" y1="-10.42" x2="-120.54" y2="-10.55"/><line x1="-118.48" y1="-15.60" x2="-119.96" y2="-15.79"/><line x1="-117.68" y1="-20.75" x2="-119.16" y2="-21.01"/><line x1="-116.67" y1="-25.86" x2="-118.13" y2="-26.19"/><line x1="-115.43" y1="-30.93" x2="-116.88" y2="-31.32"/><line x1="-113.97" y1="-35.93" x2="-115.40" y2="-36.39"/><line x1="-112.29" y1="-40.87" x2="-113.70" y2="-41.38"/><line x1="-110.40" y1="-45.73" x2="-111.79" y2="-46.30"/><line x1="-108.30" y1="-50.50" x2="-109.66" y2="-51.14"/><line x1="-106.00" y1="-55.18" x2="-107.33" y2="-55.87"/><line x1="-103.49" y1="-59.75" x2="-104.79" y2="-60.50"/><line x1="-100.79" y1="-64.21" x2="-102.05" y2="-65.01"/><line x1="-97.89" y1="-68.54" x2="-99.12" y2="-69.40"/><line x1="-94.81" y1="-72.75" x2="-96.00" y2="-73.66"/><line x1="-91.54" y1="-76.81" x2="-92.69" y2="-77.78"/><line x1="-88.10" y1="-80.73" x2="-89.21" y2="-81.75"/><line x1="-84.50" y1="-84.50" x2="-85.56" y2="-85.56"/><line x1="-80.73" y1="-88.10" x2="-81.75" y2="-89.21"/><line x1="-76.81" y1="-91.54" x2="-77.78" y2="-92.69"/><line x1="-72.75" y1="-94.81" x2="-73.66" y2="-96.00"/><line x1="-68.54" y1="-97.89" x2="-69.40" y2="-99.12"/><line x1="-64.21" y1="-100.79" x2="-65.01" y2="-102.05"/><line x1="-59.75" y1="-103.49" x2="-60.50" y2="-104.79"/><line x1="-55.18" y1="-106.00" x2="-55.87" y2="-107.33"/><line x1="-50.50" y1="-108.30" x2="-51.14" y2="-109.66"/><line x1="-45.73" y1="-110.40" x2="-46.30" y2="-111.79"/><line x1="-40.87" y1="-112.29" x2="-41.38" y2="-113.70"/><line x1="-35.93" y1="-113.97" x2="-36.39" y2="-115.40"/><line x1="-30.93" y1="-115.43" x2="-31.32" y2="-116.88"/><line x1="-25.86" y1="-116.67" x2="-26.19" y2="-118.13"/><line x1="-20.75" y1="-117.68" x2="-21.01" y2="-119.16"/><line x1="-15.60" y1="-118.48" x2="-15.79" y2="-119.96"/><line x1="-10.42" y1="-119.05" x2="-10.55" y2="-120.54"/><line x1="-5.21" y1="-119.39" x2="-5.28" y2="-120.88"/><line x1="-0.00" y1="-119.50" x2="-0.00" y2="-121.00"/><line x1="5.21" y1="-119.39" x2="5.28" y2="-120.88"/><line x1="10.42" y1="-119.05" x2="10.55" y2="-120.54"/><line x1="15.60" y1="-118.48" x2="15.79" y2="-119.96"/><line x1="20.75" y1="-117.68" x2="21.01" y2="-119.16"/><line x1="25.86" y1="-116.67" x2="26.19" y2="-118.13"/><line x1="30.93" y1="-115.43" x2="31.32" y2="-116.88"/><line x1="35.93" y1="-113.97" x2="36.39" y2="-115.40"/><line x1="40.87" y1="-112.29" x2="41.38" y2="-113.70"/><line x1="45.73" y1="-110.40" x2="46.30" y2="-111.79"/><line x1="50.50" y1="-108.30" x2="51.14" y2="-109.66"/><line x1="55.18" y1="-106.00" x2="55.87" y2="-107.33"/><line x1="59.75" y1="-103.49" x2="60.50" y2="-104.79"/><line x1="64.21" y1="-100.79" x2="65.01" y2="-102.05"/><line x1="68.54" y1="-97.89" x2="69.40" y2="-99.12"/><line x1="72.75" y1="-94.81" x2="73.66" y2="-96.00"/><line x1="76.81" y1="-91.54" x2="77.78" y2="-92.69"/><line x1="80.73" y1="-88.10" x2="81.75" y2="-89.21"/><line x1="84.50" y1="-84.50" x2="85.56" y2="-85.56"/><line x1="88.10" y1="-80.73" x2="89.21" y2="-81.75"/><line x1="91.54" y1="-76.81" x2="92.69" y2="-77.78"/><line x1="94.81" y1="-72.75" x2="96.00" y2="-73.66"/><line x1="97.89" y1="-68.54" x2="99.12" y2="-69.40"/><line x1="100.79" y1="-64.21" x2="102.05" y2="-65.01"/><line x1="103.49" y1="-59.75" x2="104.79" y2="-60.50"/><line x1="106.00" y1="-55.18" x2="107.33" y2="-55.87"/><line x1="108.30" y1="-50.50" x2="109.66" y2="-51.14"/><line x1="110.40" y1="-45.73" x2="111.79" y2="-46.30"/><line x1="112.29" y1="-40.87" x2="113.70" y2="-41.38"/><line x1="113.97" y1="-35.93" x2="115.40" y2="-36.39"/><line x1="115.43" y1="-30.93" x2="116.88" y2="-31.32"/><line x1="116.67" y1="-25.86" x2="118.13" y2="-26.19"/><line x1="117.68" y1="-20.75" x2="119.16" y2="-21.01"/><line x1="118.48" y1="-15.60" x2="119.96" y2="-15.79"/><line x1="119.05" y1="-10.42" x2="120.54" y2="-10.55"/><line x1="119.39" y1="-5.21" x2="120.88" y2="-5.28"/></g><circle r="120.6" fill="none" stroke="url(#mg-lip)" stroke-width="0.8"/><circle r="111" fill="none" stroke="#000" stroke-opacity="0.35" stroke-width="0.6"/><g class="mg-pins" fill="url(#mg-pin)"><circle cx="0.0" cy="-114.5" r="1.6"/><circle cx="99.2" cy="57.2" r="1.6"/><circle cx="-99.2" cy="57.2" r="1.6"/></g><circle r="108" fill="url(#mg-t-amber)"/><circle r="106.5" fill="none" stroke="#e8b86a" stroke-opacity="0.18" stroke-width="1"/><g class="mg-scale"><line x1="106.0" y1="0.0" x2="100.0" y2="0.0"/><line x1="105.6" y1="9.2" x2="102.6" y2="9.0"/><line x1="104.4" y1="18.4" x2="101.4" y2="17.9"/><line x1="102.4" y1="27.4" x2="99.5" y2="26.7"/><line x1="99.6" y1="36.3" x2="96.8" y2="35.2"/><line x1="96.1" y1="44.8" x2="93.3" y2="43.5"/><line x1="91.8" y1="53.0" x2="86.6" y2="50.0"/><line x1="86.8" y1="60.8" x2="84.4" y2="59.1"/><line x1="81.2" y1="68.1" x2="78.9" y2="66.2"/><line x1="75.0" y1="75.0" x2="72.8" y2="72.8"/><line x1="68.1" y1="81.2" x2="66.2" y2="78.9"/><line x1="60.8" y1="86.8" x2="59.1" y2="84.4"/><line x1="53.0" y1="91.8" x2="50.0" y2="86.6"/><line x1="44.8" y1="96.1" x2="43.5" y2="93.3"/><line x1="36.3" y1="99.6" x2="35.2" y2="96.8"/><line x1="27.4" y1="102.4" x2="26.7" y2="99.5"/><line x1="18.4" y1="104.4" x2="17.9" y2="101.4"/><line x1="9.2" y1="105.6" x2="9.0" y2="102.6"/><line x1="0.0" y1="106.0" x2="0.0" y2="100.0"/><line x1="-9.2" y1="105.6" x2="-9.0" y2="102.6"/><line x1="-18.4" y1="104.4" x2="-17.9" y2="101.4"/><line x1="-27.4" y1="102.4" x2="-26.7" y2="99.5"/><line x1="-36.3" y1="99.6" x2="-35.2" y2="96.8"/><line x1="-44.8" y1="96.1" x2="-43.5" y2="93.3"/><line x1="-53.0" y1="91.8" x2="-50.0" y2="86.6"/><line x1="-60.8" y1="86.8" x2="-59.1" y2="84.4"/><line x1="-68.1" y1="81.2" x2="-66.2" y2="78.9"/><line x1="-75.0" y1="75.0" x2="-72.8" y2="72.8"/><line x1="-81.2" y1="68.1" x2="-78.9" y2="66.2"/><line x1="-86.8" y1="60.8" x2="-84.4" y2="59.1"/><line x1="-91.8" y1="53.0" x2="-86.6" y2="50.0"/><line x1="-96.1" y1="44.8" x2="-93.3" y2="43.5"/><line x1="-99.6" y1="36.3" x2="-96.8" y2="35.2"/><line x1="-102.4" y1="27.4" x2="-99.5" y2="26.7"/><line x1="-104.4" y1="18.4" x2="-101.4" y2="17.9"/><line x1="-105.6" y1="9.2" x2="-102.6" y2="9.0"/><line x1="-106.0" y1="0.0" x2="-100.0" y2="0.0"/><line x1="-105.6" y1="-9.2" x2="-102.6" y2="-9.0"/><line x1="-104.4" y1="-18.4" x2="-101.4" y2="-17.9"/><line x1="-102.4" y1="-27.4" x2="-99.5" y2="-26.7"/><line x1="-99.6" y1="-36.3" x2="-96.8" y2="-35.2"/><line x1="-96.1" y1="-44.8" x2="-93.3" y2="-43.5"/><line x1="-91.8" y1="-53.0" x2="-86.6" y2="-50.0"/><line x1="-86.8" y1="-60.8" x2="-84.4" y2="-59.1"/><line x1="-81.2" y1="-68.1" x2="-78.9" y2="-66.2"/><line x1="-75.0" y1="-75.0" x2="-72.8" y2="-72.8"/><line x1="-68.1" y1="-81.2" x2="-66.2" y2="-78.9"/><line x1="-60.8" y1="-86.8" x2="-59.1" y2="-84.4"/><line x1="-53.0" y1="-91.8" x2="-50.0" y2="-86.6"/><line x1="-44.8" y1="-96.1" x2="-43.5" y2="-93.3"/><line x1="-36.3" y1="-99.6" x2="-35.2" y2="-96.8"/><line x1="-27.4" y1="-102.4" x2="-26.7" y2="-99.5"/><line x1="-18.4" y1="-104.4" x2="-17.9" y2="-101.4"/><line x1="-9.2" y1="-105.6" x2="-9.0" y2="-102.6"/><line x1="-0.0" y1="-106.0" x2="-0.0" y2="-100.0"/><line x1="9.2" y1="-105.6" x2="9.0" y2="-102.6"/><line x1="18.4" y1="-104.4" x2="17.9" y2="-101.4"/><line x1="27.4" y1="-102.4" x2="26.7" y2="-99.5"/><line x1="36.3" y1="-99.6" x2="35.2" y2="-96.8"/><line x1="44.8" y1="-96.1" x2="43.5" y2="-93.3"/><line x1="53.0" y1="-91.8" x2="50.0" y2="-86.6"/><line x1="60.8" y1="-86.8" x2="59.1" y2="-84.4"/><line x1="68.1" y1="-81.2" x2="66.2" y2="-78.9"/><line x1="75.0" y1="-75.0" x2="72.8" y2="-72.8"/><line x1="81.2" y1="-68.1" x2="78.9" y2="-66.2"/><line x1="86.8" y1="-60.8" x2="84.4" y2="-59.1"/><line x1="91.8" y1="-53.0" x2="86.6" y2="-50.0"/><line x1="96.1" y1="-44.8" x2="93.3" y2="-43.5"/><line x1="99.6" y1="-36.3" x2="96.8" y2="-35.2"/><line x1="102.4" y1="-27.4" x2="99.5" y2="-26.7"/><line x1="104.4" y1="-18.4" x2="101.4" y2="-17.9"/><line x1="105.6" y1="-9.2" x2="102.6" y2="-9.0"/></g><g class="mg-nums"><text transform="rotate(0) translate(0 -94)" text-anchor="middle">0</text><text transform="rotate(30) translate(0 -94)" text-anchor="middle">30</text><text transform="rotate(60) translate(0 -94)" text-anchor="middle">60</text><text transform="rotate(90) translate(0 -94)" text-anchor="middle">90</text><text transform="rotate(120) translate(0 -94)" text-anchor="middle">120</text><text transform="rotate(150) translate(0 -94)" text-anchor="middle">150</text><text transform="rotate(180) translate(0 -94)" text-anchor="middle">180</text><text transform="rotate(210) translate(0 -94)" text-anchor="middle">210</text><text transform="rotate(240) translate(0 -94)" text-anchor="middle">240</text><text transform="rotate(270) translate(0 -94)" text-anchor="middle">270</text><text transform="rotate(300) translate(0 -94)" text-anchor="middle">300</text><text transform="rotate(330) translate(0 -94)" text-anchor="middle">330</text></g><g class="mg-reticle"><line x1="-88" x2="88"/><line y1="-88" y2="88"/><circle r="52"/></g></g><g class="mg-lens" data-tint="green"><line x1="-112.4" y1="42.1" x2="-128" y2="48" stroke="url(#mg-brass)" stroke-width="5" stroke-linecap="round"/><path d="M 121 0 A 121 121 0 1 0 -121 0 A 121 121 0 1 0 121 0 Z M 108 0 A 108 108 0 1 1 -108 0 A 108 108 0 1 1 108 0 Z" fill="url(#mg-metal)" fill-rule="evenodd"/><path d="M 111 0 A 111 111 0 1 0 -111 0 A 111 111 0 1 0 111 0 Z M 108 0 A 108 108 0 1 1 -108 0 A 108 108 0 1 1 108 0 Z" fill="url(#mg-chamfer)" fill-rule="evenodd"/><g class="mg-knurl"><line x1="119.50" y1="0.00" x2="121.00" y2="0.00"/><line x1="119.39" y1="5.21" x2="120.88" y2="5.28"/><line x1="119.05" y1="10.42" x2="120.54" y2="10.55"/><line x1="118.48" y1="15.60" x2="119.96" y2="15.79"/><line x1="117.68" y1="20.75" x2="119.16" y2="21.01"/><line x1="116.67" y1="25.86" x2="118.13" y2="26.19"/><line x1="115.43" y1="30.93" x2="116.88" y2="31.32"/><line x1="113.97" y1="35.93" x2="115.40" y2="36.39"/><line x1="112.29" y1="40.87" x2="113.70" y2="41.38"/><line x1="110.40" y1="45.73" x2="111.79" y2="46.30"/><line x1="108.30" y1="50.50" x2="109.66" y2="51.14"/><line x1="106.00" y1="55.18" x2="107.33" y2="55.87"/><line x1="103.49" y1="59.75" x2="104.79" y2="60.50"/><line x1="100.79" y1="64.21" x2="102.05" y2="65.01"/><line x1="97.89" y1="68.54" x2="99.12" y2="69.40"/><line x1="94.81" y1="72.75" x2="96.00" y2="73.66"/><line x1="91.54" y1="76.81" x2="92.69" y2="77.78"/><line x1="88.10" y1="80.73" x2="89.21" y2="81.75"/><line x1="84.50" y1="84.50" x2="85.56" y2="85.56"/><line x1="80.73" y1="88.10" x2="81.75" y2="89.21"/><line x1="76.81" y1="91.54" x2="77.78" y2="92.69"/><line x1="72.75" y1="94.81" x2="73.66" y2="96.00"/><line x1="68.54" y1="97.89" x2="69.40" y2="99.12"/><line x1="64.21" y1="100.79" x2="65.01" y2="102.05"/><line x1="59.75" y1="103.49" x2="60.50" y2="104.79"/><line x1="55.18" y1="106.00" x2="55.87" y2="107.33"/><line x1="50.50" y1="108.30" x2="51.14" y2="109.66"/><line x1="45.73" y1="110.40" x2="46.30" y2="111.79"/><line x1="40.87" y1="112.29" x2="41.38" y2="113.70"/><line x1="35.93" y1="113.97" x2="36.39" y2="115.40"/><line x1="30.93" y1="115.43" x2="31.32" y2="116.88"/><line x1="25.86" y1="116.67" x2="26.19" y2="118.13"/><line x1="20.75" y1="117.68" x2="21.01" y2="119.16"/><line x1="15.60" y1="118.48" x2="15.79" y2="119.96"/><line x1="10.42" y1="119.05" x2="10.55" y2="120.54"/><line x1="5.21" y1="119.39" x2="5.28" y2="120.88"/><line x1="0.00" y1="119.50" x2="0.00" y2="121.00"/><line x1="-5.21" y1="119.39" x2="-5.28" y2="120.88"/><line x1="-10.42" y1="119.05" x2="-10.55" y2="120.54"/><line x1="-15.60" y1="118.48" x2="-15.79" y2="119.96"/><line x1="-20.75" y1="117.68" x2="-21.01" y2="119.16"/><line x1="-25.86" y1="116.67" x2="-26.19" y2="118.13"/><line x1="-30.93" y1="115.43" x2="-31.32" y2="116.88"/><line x1="-35.93" y1="113.97" x2="-36.39" y2="115.40"/><line x1="-40.87" y1="112.29" x2="-41.38" y2="113.70"/><line x1="-45.73" y1="110.40" x2="-46.30" y2="111.79"/><line x1="-50.50" y1="108.30" x2="-51.14" y2="109.66"/><line x1="-55.18" y1="106.00" x2="-55.87" y2="107.33"/><line x1="-59.75" y1="103.49" x2="-60.50" y2="104.79"/><line x1="-64.21" y1="100.79" x2="-65.01" y2="102.05"/><line x1="-68.54" y1="97.89" x2="-69.40" y2="99.12"/><line x1="-72.75" y1="94.81" x2="-73.66" y2="96.00"/><line x1="-76.81" y1="91.54" x2="-77.78" y2="92.69"/><line x1="-80.73" y1="88.10" x2="-81.75" y2="89.21"/><line x1="-84.50" y1="84.50" x2="-85.56" y2="85.56"/><line x1="-88.10" y1="80.73" x2="-89.21" y2="81.75"/><line x1="-91.54" y1="76.81" x2="-92.69" y2="77.78"/><line x1="-94.81" y1="72.75" x2="-96.00" y2="73.66"/><line x1="-97.89" y1="68.54" x2="-99.12" y2="69.40"/><line x1="-100.79" y1="64.21" x2="-102.05" y2="65.01"/><line x1="-103.49" y1="59.75" x2="-104.79" y2="60.50"/><line x1="-106.00" y1="55.18" x2="-107.33" y2="55.87"/><line x1="-108.30" y1="50.50" x2="-109.66" y2="51.14"/><line x1="-110.40" y1="45.73" x2="-111.79" y2="46.30"/><line x1="-112.29" y1="40.87" x2="-113.70" y2="41.38"/><line x1="-113.97" y1="35.93" x2="-115.40" y2="36.39"/><line x1="-115.43" y1="30.93" x2="-116.88" y2="31.32"/><line x1="-116.67" y1="25.86" x2="-118.13" y2="26.19"/><line x1="-117.68" y1="20.75" x2="-119.16" y2="21.01"/><line x1="-118.48" y1="15.60" x2="-119.96" y2="15.79"/><line x1="-119.05" y1="10.42" x2="-120.54" y2="10.55"/><line x1="-119.39" y1="5.21" x2="-120.88" y2="5.28"/><line x1="-119.50" y1="0.00" x2="-121.00" y2="0.00"/><line x1="-119.39" y1="-5.21" x2="-120.88" y2="-5.28"/><line x1="-119.05" y1="-10.42" x2="-120.54" y2="-10.55"/><line x1="-118.48" y1="-15.60" x2="-119.96" y2="-15.79"/><line x1="-117.68" y1="-20.75" x2="-119.16" y2="-21.01"/><line x1="-116.67" y1="-25.86" x2="-118.13" y2="-26.19"/><line x1="-115.43" y1="-30.93" x2="-116.88" y2="-31.32"/><line x1="-113.97" y1="-35.93" x2="-115.40" y2="-36.39"/><line x1="-112.29" y1="-40.87" x2="-113.70" y2="-41.38"/><line x1="-110.40" y1="-45.73" x2="-111.79" y2="-46.30"/><line x1="-108.30" y1="-50.50" x2="-109.66" y2="-51.14"/><line x1="-106.00" y1="-55.18" x2="-107.33" y2="-55.87"/><line x1="-103.49" y1="-59.75" x2="-104.79" y2="-60.50"/><line x1="-100.79" y1="-64.21" x2="-102.05" y2="-65.01"/><line x1="-97.89" y1="-68.54" x2="-99.12" y2="-69.40"/><line x1="-94.81" y1="-72.75" x2="-96.00" y2="-73.66"/><line x1="-91.54" y1="-76.81" x2="-92.69" y2="-77.78"/><line x1="-88.10" y1="-80.73" x2="-89.21" y2="-81.75"/><line x1="-84.50" y1="-84.50" x2="-85.56" y2="-85.56"/><line x1="-80.73" y1="-88.10" x2="-81.75" y2="-89.21"/><line x1="-76.81" y1="-91.54" x2="-77.78" y2="-92.69"/><line x1="-72.75" y1="-94.81" x2="-73.66" y2="-96.00"/><line x1="-68.54" y1="-97.89" x2="-69.40" y2="-99.12"/><line x1="-64.21" y1="-100.79" x2="-65.01" y2="-102.05"/><line x1="-59.75" y1="-103.49" x2="-60.50" y2="-104.79"/><line x1="-55.18" y1="-106.00" x2="-55.87" y2="-107.33"/><line x1="-50.50" y1="-108.30" x2="-51.14" y2="-109.66"/><line x1="-45.73" y1="-110.40" x2="-46.30" y2="-111.79"/><line x1="-40.87" y1="-112.29" x2="-41.38" y2="-113.70"/><line x1="-35.93" y1="-113.97" x2="-36.39" y2="-115.40"/><line x1="-30.93" y1="-115.43" x2="-31.32" y2="-116.88"/><line x1="-25.86" y1="-116.67" x2="-26.19" y2="-118.13"/><line x1="-20.75" y1="-117.68" x2="-21.01" y2="-119.16"/><line x1="-15.60" y1="-118.48" x2="-15.79" y2="-119.96"/><line x1="-10.42" y1="-119.05" x2="-10.55" y2="-120.54"/><line x1="-5.21" y1="-119.39" x2="-5.28" y2="-120.88"/><line x1="-0.00" y1="-119.50" x2="-0.00" y2="-121.00"/><line x1="5.21" y1="-119.39" x2="5.28" y2="-120.88"/><line x1="10.42" y1="-119.05" x2="10.55" y2="-120.54"/><line x1="15.60" y1="-118.48" x2="15.79" y2="-119.96"/><line x1="20.75" y1="-117.68" x2="21.01" y2="-119.16"/><line x1="25.86" y1="-116.67" x2="26.19" y2="-118.13"/><line x1="30.93" y1="-115.43" x2="31.32" y2="-116.88"/><line x1="35.93" y1="-113.97" x2="36.39" y2="-115.40"/><line x1="40.87" y1="-112.29" x2="41.38" y2="-113.70"/><line x1="45.73" y1="-110.40" x2="46.30" y2="-111.79"/><line x1="50.50" y1="-108.30" x2="51.14" y2="-109.66"/><line x1="55.18" y1="-106.00" x2="55.87" y2="-107.33"/><line x1="59.75" y1="-103.49" x2="60.50" y2="-104.79"/><line x1="64.21" y1="-100.79" x2="65.01" y2="-102.05"/><line x1="68.54" y1="-97.89" x2="69.40" y2="-99.12"/><line x1="72.75" y1="-94.81" x2="73.66" y2="-96.00"/><line x1="76.81" y1="-91.54" x2="77.78" y2="-92.69"/><line x1="80.73" y1="-88.10" x2="81.75" y2="-89.21"/><line x1="84.50" y1="-84.50" x2="85.56" y2="-85.56"/><line x1="88.10" y1="-80.73" x2="89.21" y2="-81.75"/><line x1="91.54" y1="-76.81" x2="92.69" y2="-77.78"/><line x1="94.81" y1="-72.75" x2="96.00" y2="-73.66"/><line x1="97.89" y1="-68.54" x2="99.12" y2="-69.40"/><line x1="100.79" y1="-64.21" x2="102.05" y2="-65.01"/><line x1="103.49" y1="-59.75" x2="104.79" y2="-60.50"/><line x1="106.00" y1="-55.18" x2="107.33" y2="-55.87"/><line x1="108.30" y1="-50.50" x2="109.66" y2="-51.14"/><line x1="110.40" y1="-45.73" x2="111.79" y2="-46.30"/><line x1="112.29" y1="-40.87" x2="113.70" y2="-41.38"/><line x1="113.97" y1="-35.93" x2="115.40" y2="-36.39"/><line x1="115.43" y1="-30.93" x2="116.88" y2="-31.32"/><line x1="116.67" y1="-25.86" x2="118.13" y2="-26.19"/><line x1="117.68" y1="-20.75" x2="119.16" y2="-21.01"/><line x1="118.48" y1="-15.60" x2="119.96" y2="-15.79"/><line x1="119.05" y1="-10.42" x2="120.54" y2="-10.55"/><line x1="119.39" y1="-5.21" x2="120.88" y2="-5.28"/></g><circle r="120.6" fill="none" stroke="url(#mg-lip)" stroke-width="0.8"/><circle r="111" fill="none" stroke="#000" stroke-opacity="0.35" stroke-width="0.6"/><g class="mg-pins" fill="url(#mg-pin)"><circle cx="0.0" cy="-114.5" r="1.6"/><circle cx="99.2" cy="57.2" r="1.6"/><circle cx="-99.2" cy="57.2" r="1.6"/></g><circle r="108" fill="url(#mg-t-green)"/><circle r="106.5" fill="none" stroke="#7fd6a8" stroke-opacity="0.18" stroke-width="1"/><g class="mg-scale"><line x1="106.0" y1="0.0" x2="100.0" y2="0.0"/><line x1="105.6" y1="9.2" x2="102.6" y2="9.0"/><line x1="104.4" y1="18.4" x2="101.4" y2="17.9"/><line x1="102.4" y1="27.4" x2="99.5" y2="26.7"/><line x1="99.6" y1="36.3" x2="96.8" y2="35.2"/><line x1="96.1" y1="44.8" x2="93.3" y2="43.5"/><line x1="91.8" y1="53.0" x2="86.6" y2="50.0"/><line x1="86.8" y1="60.8" x2="84.4" y2="59.1"/><line x1="81.2" y1="68.1" x2="78.9" y2="66.2"/><line x1="75.0" y1="75.0" x2="72.8" y2="72.8"/><line x1="68.1" y1="81.2" x2="66.2" y2="78.9"/><line x1="60.8" y1="86.8" x2="59.1" y2="84.4"/><line x1="53.0" y1="91.8" x2="50.0" y2="86.6"/><line x1="44.8" y1="96.1" x2="43.5" y2="93.3"/><line x1="36.3" y1="99.6" x2="35.2" y2="96.8"/><line x1="27.4" y1="102.4" x2="26.7" y2="99.5"/><line x1="18.4" y1="104.4" x2="17.9" y2="101.4"/><line x1="9.2" y1="105.6" x2="9.0" y2="102.6"/><line x1="0.0" y1="106.0" x2="0.0" y2="100.0"/><line x1="-9.2" y1="105.6" x2="-9.0" y2="102.6"/><line x1="-18.4" y1="104.4" x2="-17.9" y2="101.4"/><line x1="-27.4" y1="102.4" x2="-26.7" y2="99.5"/><line x1="-36.3" y1="99.6" x2="-35.2" y2="96.8"/><line x1="-44.8" y1="96.1" x2="-43.5" y2="93.3"/><line x1="-53.0" y1="91.8" x2="-50.0" y2="86.6"/><line x1="-60.8" y1="86.8" x2="-59.1" y2="84.4"/><line x1="-68.1" y1="81.2" x2="-66.2" y2="78.9"/><line x1="-75.0" y1="75.0" x2="-72.8" y2="72.8"/><line x1="-81.2" y1="68.1" x2="-78.9" y2="66.2"/><line x1="-86.8" y1="60.8" x2="-84.4" y2="59.1"/><line x1="-91.8" y1="53.0" x2="-86.6" y2="50.0"/><line x1="-96.1" y1="44.8" x2="-93.3" y2="43.5"/><line x1="-99.6" y1="36.3" x2="-96.8" y2="35.2"/><line x1="-102.4" y1="27.4" x2="-99.5" y2="26.7"/><line x1="-104.4" y1="18.4" x2="-101.4" y2="17.9"/><line x1="-105.6" y1="9.2" x2="-102.6" y2="9.0"/><line x1="-106.0" y1="0.0" x2="-100.0" y2="0.0"/><line x1="-105.6" y1="-9.2" x2="-102.6" y2="-9.0"/><line x1="-104.4" y1="-18.4" x2="-101.4" y2="-17.9"/><line x1="-102.4" y1="-27.4" x2="-99.5" y2="-26.7"/><line x1="-99.6" y1="-36.3" x2="-96.8" y2="-35.2"/><line x1="-96.1" y1="-44.8" x2="-93.3" y2="-43.5"/><line x1="-91.8" y1="-53.0" x2="-86.6" y2="-50.0"/><line x1="-86.8" y1="-60.8" x2="-84.4" y2="-59.1"/><line x1="-81.2" y1="-68.1" x2="-78.9" y2="-66.2"/><line x1="-75.0" y1="-75.0" x2="-72.8" y2="-72.8"/><line x1="-68.1" y1="-81.2" x2="-66.2" y2="-78.9"/><line x1="-60.8" y1="-86.8" x2="-59.1" y2="-84.4"/><line x1="-53.0" y1="-91.8" x2="-50.0" y2="-86.6"/><line x1="-44.8" y1="-96.1" x2="-43.5" y2="-93.3"/><line x1="-36.3" y1="-99.6" x2="-35.2" y2="-96.8"/><line x1="-27.4" y1="-102.4" x2="-26.7" y2="-99.5"/><line x1="-18.4" y1="-104.4" x2="-17.9" y2="-101.4"/><line x1="-9.2" y1="-105.6" x2="-9.0" y2="-102.6"/><line x1="-0.0" y1="-106.0" x2="-0.0" y2="-100.0"/><line x1="9.2" y1="-105.6" x2="9.0" y2="-102.6"/><line x1="18.4" y1="-104.4" x2="17.9" y2="-101.4"/><line x1="27.4" y1="-102.4" x2="26.7" y2="-99.5"/><line x1="36.3" y1="-99.6" x2="35.2" y2="-96.8"/><line x1="44.8" y1="-96.1" x2="43.5" y2="-93.3"/><line x1="53.0" y1="-91.8" x2="50.0" y2="-86.6"/><line x1="60.8" y1="-86.8" x2="59.1" y2="-84.4"/><line x1="68.1" y1="-81.2" x2="66.2" y2="-78.9"/><line x1="75.0" y1="-75.0" x2="72.8" y2="-72.8"/><line x1="81.2" y1="-68.1" x2="78.9" y2="-66.2"/><line x1="86.8" y1="-60.8" x2="84.4" y2="-59.1"/><line x1="91.8" y1="-53.0" x2="86.6" y2="-50.0"/><line x1="96.1" y1="-44.8" x2="93.3" y2="-43.5"/><line x1="99.6" y1="-36.3" x2="96.8" y2="-35.2"/><line x1="102.4" y1="-27.4" x2="99.5" y2="-26.7"/><line x1="104.4" y1="-18.4" x2="101.4" y2="-17.9"/><line x1="105.6" y1="-9.2" x2="102.6" y2="-9.0"/></g><g class="mg-nums"><text transform="rotate(0) translate(0 -94)" text-anchor="middle">0</text><text transform="rotate(30) translate(0 -94)" text-anchor="middle">30</text><text transform="rotate(60) translate(0 -94)" text-anchor="middle">60</text><text transform="rotate(90) translate(0 -94)" text-anchor="middle">90</text><text transform="rotate(120) translate(0 -94)" text-anchor="middle">120</text><text transform="rotate(150) translate(0 -94)" text-anchor="middle">150</text><text transform="rotate(180) translate(0 -94)" text-anchor="middle">180</text><text transform="rotate(210) translate(0 -94)" text-anchor="middle">210</text><text transform="rotate(240) translate(0 -94)" text-anchor="middle">240</text><text transform="rotate(270) translate(0 -94)" text-anchor="middle">270</text><text transform="rotate(300) translate(0 -94)" text-anchor="middle">300</text><text transform="rotate(330) translate(0 -94)" text-anchor="middle">330</text></g><g class="mg-reticle"><line x1="-88" x2="88"/><line y1="-88" y2="88"/><circle r="52"/></g></g><g class="mg-lens" data-tint="blue"><line x1="-112.4" y1="42.1" x2="-128" y2="48" stroke="url(#mg-brass)" stroke-width="5" stroke-linecap="round"/><path d="M 121 0 A 121 121 0 1 0 -121 0 A 121 121 0 1 0 121 0 Z M 108 0 A 108 108 0 1 1 -108 0 A 108 108 0 1 1 108 0 Z" fill="url(#mg-metal)" fill-rule="evenodd"/><path d="M 111 0 A 111 111 0 1 0 -111 0 A 111 111 0 1 0 111 0 Z M 108 0 A 108 108 0 1 1 -108 0 A 108 108 0 1 1 108 0 Z" fill="url(#mg-chamfer)" fill-rule="evenodd"/><g class="mg-knurl"><line x1="119.50" y1="0.00" x2="121.00" y2="0.00"/><line x1="119.39" y1="5.21" x2="120.88" y2="5.28"/><line x1="119.05" y1="10.42" x2="120.54" y2="10.55"/><line x1="118.48" y1="15.60" x2="119.96" y2="15.79"/><line x1="117.68" y1="20.75" x2="119.16" y2="21.01"/><line x1="116.67" y1="25.86" x2="118.13" y2="26.19"/><line x1="115.43" y1="30.93" x2="116.88" y2="31.32"/><line x1="113.97" y1="35.93" x2="115.40" y2="36.39"/><line x1="112.29" y1="40.87" x2="113.70" y2="41.38"/><line x1="110.40" y1="45.73" x2="111.79" y2="46.30"/><line x1="108.30" y1="50.50" x2="109.66" y2="51.14"/><line x1="106.00" y1="55.18" x2="107.33" y2="55.87"/><line x1="103.49" y1="59.75" x2="104.79" y2="60.50"/><line x1="100.79" y1="64.21" x2="102.05" y2="65.01"/><line x1="97.89" y1="68.54" x2="99.12" y2="69.40"/><line x1="94.81" y1="72.75" x2="96.00" y2="73.66"/><line x1="91.54" y1="76.81" x2="92.69" y2="77.78"/><line x1="88.10" y1="80.73" x2="89.21" y2="81.75"/><line x1="84.50" y1="84.50" x2="85.56" y2="85.56"/><line x1="80.73" y1="88.10" x2="81.75" y2="89.21"/><line x1="76.81" y1="91.54" x2="77.78" y2="92.69"/><line x1="72.75" y1="94.81" x2="73.66" y2="96.00"/><line x1="68.54" y1="97.89" x2="69.40" y2="99.12"/><line x1="64.21" y1="100.79" x2="65.01" y2="102.05"/><line x1="59.75" y1="103.49" x2="60.50" y2="104.79"/><line x1="55.18" y1="106.00" x2="55.87" y2="107.33"/><line x1="50.50" y1="108.30" x2="51.14" y2="109.66"/><line x1="45.73" y1="110.40" x2="46.30" y2="111.79"/><line x1="40.87" y1="112.29" x2="41.38" y2="113.70"/><line x1="35.93" y1="113.97" x2="36.39" y2="115.40"/><line x1="30.93" y1="115.43" x2="31.32" y2="116.88"/><line x1="25.86" y1="116.67" x2="26.19" y2="118.13"/><line x1="20.75" y1="117.68" x2="21.01" y2="119.16"/><line x1="15.60" y1="118.48" x2="15.79" y2="119.96"/><line x1="10.42" y1="119.05" x2="10.55" y2="120.54"/><line x1="5.21" y1="119.39" x2="5.28" y2="120.88"/><line x1="0.00" y1="119.50" x2="0.00" y2="121.00"/><line x1="-5.21" y1="119.39" x2="-5.28" y2="120.88"/><line x1="-10.42" y1="119.05" x2="-10.55" y2="120.54"/><line x1="-15.60" y1="118.48" x2="-15.79" y2="119.96"/><line x1="-20.75" y1="117.68" x2="-21.01" y2="119.16"/><line x1="-25.86" y1="116.67" x2="-26.19" y2="118.13"/><line x1="-30.93" y1="115.43" x2="-31.32" y2="116.88"/><line x1="-35.93" y1="113.97" x2="-36.39" y2="115.40"/><line x1="-40.87" y1="112.29" x2="-41.38" y2="113.70"/><line x1="-45.73" y1="110.40" x2="-46.30" y2="111.79"/><line x1="-50.50" y1="108.30" x2="-51.14" y2="109.66"/><line x1="-55.18" y1="106.00" x2="-55.87" y2="107.33"/><line x1="-59.75" y1="103.49" x2="-60.50" y2="104.79"/><line x1="-64.21" y1="100.79" x2="-65.01" y2="102.05"/><line x1="-68.54" y1="97.89" x2="-69.40" y2="99.12"/><line x1="-72.75" y1="94.81" x2="-73.66" y2="96.00"/><line x1="-76.81" y1="91.54" x2="-77.78" y2="92.69"/><line x1="-80.73" y1="88.10" x2="-81.75" y2="89.21"/><line x1="-84.50" y1="84.50" x2="-85.56" y2="85.56"/><line x1="-88.10" y1="80.73" x2="-89.21" y2="81.75"/><line x1="-91.54" y1="76.81" x2="-92.69" y2="77.78"/><line x1="-94.81" y1="72.75" x2="-96.00" y2="73.66"/><line x1="-97.89" y1="68.54" x2="-99.12" y2="69.40"/><line x1="-100.79" y1="64.21" x2="-102.05" y2="65.01"/><line x1="-103.49" y1="59.75" x2="-104.79" y2="60.50"/><line x1="-106.00" y1="55.18" x2="-107.33" y2="55.87"/><line x1="-108.30" y1="50.50" x2="-109.66" y2="51.14"/><line x1="-110.40" y1="45.73" x2="-111.79" y2="46.30"/><line x1="-112.29" y1="40.87" x2="-113.70" y2="41.38"/><line x1="-113.97" y1="35.93" x2="-115.40" y2="36.39"/><line x1="-115.43" y1="30.93" x2="-116.88" y2="31.32"/><line x1="-116.67" y1="25.86" x2="-118.13" y2="26.19"/><line x1="-117.68" y1="20.75" x2="-119.16" y2="21.01"/><line x1="-118.48" y1="15.60" x2="-119.96" y2="15.79"/><line x1="-119.05" y1="10.42" x2="-120.54" y2="10.55"/><line x1="-119.39" y1="5.21" x2="-120.88" y2="5.28"/><line x1="-119.50" y1="0.00" x2="-121.00" y2="0.00"/><line x1="-119.39" y1="-5.21" x2="-120.88" y2="-5.28"/><line x1="-119.05" y1="-10.42" x2="-120.54" y2="-10.55"/><line x1="-118.48" y1="-15.60" x2="-119.96" y2="-15.79"/><line x1="-117.68" y1="-20.75" x2="-119.16" y2="-21.01"/><line x1="-116.67" y1="-25.86" x2="-118.13" y2="-26.19"/><line x1="-115.43" y1="-30.93" x2="-116.88" y2="-31.32"/><line x1="-113.97" y1="-35.93" x2="-115.40" y2="-36.39"/><line x1="-112.29" y1="-40.87" x2="-113.70" y2="-41.38"/><line x1="-110.40" y1="-45.73" x2="-111.79" y2="-46.30"/><line x1="-108.30" y1="-50.50" x2="-109.66" y2="-51.14"/><line x1="-106.00" y1="-55.18" x2="-107.33" y2="-55.87"/><line x1="-103.49" y1="-59.75" x2="-104.79" y2="-60.50"/><line x1="-100.79" y1="-64.21" x2="-102.05" y2="-65.01"/><line x1="-97.89" y1="-68.54" x2="-99.12" y2="-69.40"/><line x1="-94.81" y1="-72.75" x2="-96.00" y2="-73.66"/><line x1="-91.54" y1="-76.81" x2="-92.69" y2="-77.78"/><line x1="-88.10" y1="-80.73" x2="-89.21" y2="-81.75"/><line x1="-84.50" y1="-84.50" x2="-85.56" y2="-85.56"/><line x1="-80.73" y1="-88.10" x2="-81.75" y2="-89.21"/><line x1="-76.81" y1="-91.54" x2="-77.78" y2="-92.69"/><line x1="-72.75" y1="-94.81" x2="-73.66" y2="-96.00"/><line x1="-68.54" y1="-97.89" x2="-69.40" y2="-99.12"/><line x1="-64.21" y1="-100.79" x2="-65.01" y2="-102.05"/><line x1="-59.75" y1="-103.49" x2="-60.50" y2="-104.79"/><line x1="-55.18" y1="-106.00" x2="-55.87" y2="-107.33"/><line x1="-50.50" y1="-108.30" x2="-51.14" y2="-109.66"/><line x1="-45.73" y1="-110.40" x2="-46.30" y2="-111.79"/><line x1="-40.87" y1="-112.29" x2="-41.38" y2="-113.70"/><line x1="-35.93" y1="-113.97" x2="-36.39" y2="-115.40"/><line x1="-30.93" y1="-115.43" x2="-31.32" y2="-116.88"/><line x1="-25.86" y1="-116.67" x2="-26.19" y2="-118.13"/><line x1="-20.75" y1="-117.68" x2="-21.01" y2="-119.16"/><line x1="-15.60" y1="-118.48" x2="-15.79" y2="-119.96"/><line x1="-10.42" y1="-119.05" x2="-10.55" y2="-120.54"/><line x1="-5.21" y1="-119.39" x2="-5.28" y2="-120.88"/><line x1="-0.00" y1="-119.50" x2="-0.00" y2="-121.00"/><line x1="5.21" y1="-119.39" x2="5.28" y2="-120.88"/><line x1="10.42" y1="-119.05" x2="10.55" y2="-120.54"/><line x1="15.60" y1="-118.48" x2="15.79" y2="-119.96"/><line x1="20.75" y1="-117.68" x2="21.01" y2="-119.16"/><line x1="25.86" y1="-116.67" x2="26.19" y2="-118.13"/><line x1="30.93" y1="-115.43" x2="31.32" y2="-116.88"/><line x1="35.93" y1="-113.97" x2="36.39" y2="-115.40"/><line x1="40.87" y1="-112.29" x2="41.38" y2="-113.70"/><line x1="45.73" y1="-110.40" x2="46.30" y2="-111.79"/><line x1="50.50" y1="-108.30" x2="51.14" y2="-109.66"/><line x1="55.18" y1="-106.00" x2="55.87" y2="-107.33"/><line x1="59.75" y1="-103.49" x2="60.50" y2="-104.79"/><line x1="64.21" y1="-100.79" x2="65.01" y2="-102.05"/><line x1="68.54" y1="-97.89" x2="69.40" y2="-99.12"/><line x1="72.75" y1="-94.81" x2="73.66" y2="-96.00"/><line x1="76.81" y1="-91.54" x2="77.78" y2="-92.69"/><line x1="80.73" y1="-88.10" x2="81.75" y2="-89.21"/><line x1="84.50" y1="-84.50" x2="85.56" y2="-85.56"/><line x1="88.10" y1="-80.73" x2="89.21" y2="-81.75"/><line x1="91.54" y1="-76.81" x2="92.69" y2="-77.78"/><line x1="94.81" y1="-72.75" x2="96.00" y2="-73.66"/><line x1="97.89" y1="-68.54" x2="99.12" y2="-69.40"/><line x1="100.79" y1="-64.21" x2="102.05" y2="-65.01"/><line x1="103.49" y1="-59.75" x2="104.79" y2="-60.50"/><line x1="106.00" y1="-55.18" x2="107.33" y2="-55.87"/><line x1="108.30" y1="-50.50" x2="109.66" y2="-51.14"/><line x1="110.40" y1="-45.73" x2="111.79" y2="-46.30"/><line x1="112.29" y1="-40.87" x2="113.70" y2="-41.38"/><line x1="113.97" y1="-35.93" x2="115.40" y2="-36.39"/><line x1="115.43" y1="-30.93" x2="116.88" y2="-31.32"/><line x1="116.67" y1="-25.86" x2="118.13" y2="-26.19"/><line x1="117.68" y1="-20.75" x2="119.16" y2="-21.01"/><line x1="118.48" y1="-15.60" x2="119.96" y2="-15.79"/><line x1="119.05" y1="-10.42" x2="120.54" y2="-10.55"/><line x1="119.39" y1="-5.21" x2="120.88" y2="-5.28"/></g><circle r="120.6" fill="none" stroke="url(#mg-lip)" stroke-width="0.8"/><circle r="111" fill="none" stroke="#000" stroke-opacity="0.35" stroke-width="0.6"/><g class="mg-pins" fill="url(#mg-pin)"><circle cx="0.0" cy="-114.5" r="1.6"/><circle cx="99.2" cy="57.2" r="1.6"/><circle cx="-99.2" cy="57.2" r="1.6"/></g><circle r="108" fill="url(#mg-t-blue)"/><circle r="106.5" fill="none" stroke="#9fb8ff" stroke-opacity="0.18" stroke-width="1"/><g class="mg-scale"><line x1="106.0" y1="0.0" x2="100.0" y2="0.0"/><line x1="105.6" y1="9.2" x2="102.6" y2="9.0"/><line x1="104.4" y1="18.4" x2="101.4" y2="17.9"/><line x1="102.4" y1="27.4" x2="99.5" y2="26.7"/><line x1="99.6" y1="36.3" x2="96.8" y2="35.2"/><line x1="96.1" y1="44.8" x2="93.3" y2="43.5"/><line x1="91.8" y1="53.0" x2="86.6" y2="50.0"/><line x1="86.8" y1="60.8" x2="84.4" y2="59.1"/><line x1="81.2" y1="68.1" x2="78.9" y2="66.2"/><line x1="75.0" y1="75.0" x2="72.8" y2="72.8"/><line x1="68.1" y1="81.2" x2="66.2" y2="78.9"/><line x1="60.8" y1="86.8" x2="59.1" y2="84.4"/><line x1="53.0" y1="91.8" x2="50.0" y2="86.6"/><line x1="44.8" y1="96.1" x2="43.5" y2="93.3"/><line x1="36.3" y1="99.6" x2="35.2" y2="96.8"/><line x1="27.4" y1="102.4" x2="26.7" y2="99.5"/><line x1="18.4" y1="104.4" x2="17.9" y2="101.4"/><line x1="9.2" y1="105.6" x2="9.0" y2="102.6"/><line x1="0.0" y1="106.0" x2="0.0" y2="100.0"/><line x1="-9.2" y1="105.6" x2="-9.0" y2="102.6"/><line x1="-18.4" y1="104.4" x2="-17.9" y2="101.4"/><line x1="-27.4" y1="102.4" x2="-26.7" y2="99.5"/><line x1="-36.3" y1="99.6" x2="-35.2" y2="96.8"/><line x1="-44.8" y1="96.1" x2="-43.5" y2="93.3"/><line x1="-53.0" y1="91.8" x2="-50.0" y2="86.6"/><line x1="-60.8" y1="86.8" x2="-59.1" y2="84.4"/><line x1="-68.1" y1="81.2" x2="-66.2" y2="78.9"/><line x1="-75.0" y1="75.0" x2="-72.8" y2="72.8"/><line x1="-81.2" y1="68.1" x2="-78.9" y2="66.2"/><line x1="-86.8" y1="60.8" x2="-84.4" y2="59.1"/><line x1="-91.8" y1="53.0" x2="-86.6" y2="50.0"/><line x1="-96.1" y1="44.8" x2="-93.3" y2="43.5"/><line x1="-99.6" y1="36.3" x2="-96.8" y2="35.2"/><line x1="-102.4" y1="27.4" x2="-99.5" y2="26.7"/><line x1="-104.4" y1="18.4" x2="-101.4" y2="17.9"/><line x1="-105.6" y1="9.2" x2="-102.6" y2="9.0"/><line x1="-106.0" y1="0.0" x2="-100.0" y2="0.0"/><line x1="-105.6" y1="-9.2" x2="-102.6" y2="-9.0"/><line x1="-104.4" y1="-18.4" x2="-101.4" y2="-17.9"/><line x1="-102.4" y1="-27.4" x2="-99.5" y2="-26.7"/><line x1="-99.6" y1="-36.3" x2="-96.8" y2="-35.2"/><line x1="-96.1" y1="-44.8" x2="-93.3" y2="-43.5"/><line x1="-91.8" y1="-53.0" x2="-86.6" y2="-50.0"/><line x1="-86.8" y1="-60.8" x2="-84.4" y2="-59.1"/><line x1="-81.2" y1="-68.1" x2="-78.9" y2="-66.2"/><line x1="-75.0" y1="-75.0" x2="-72.8" y2="-72.8"/><line x1="-68.1" y1="-81.2" x2="-66.2" y2="-78.9"/><line x1="-60.8" y1="-86.8" x2="-59.1" y2="-84.4"/><line x1="-53.0" y1="-91.8" x2="-50.0" y2="-86.6"/><line x1="-44.8" y1="-96.1" x2="-43.5" y2="-93.3"/><line x1="-36.3" y1="-99.6" x2="-35.2" y2="-96.8"/><line x1="-27.4" y1="-102.4" x2="-26.7" y2="-99.5"/><line x1="-18.4" y1="-104.4" x2="-17.9" y2="-101.4"/><line x1="-9.2" y1="-105.6" x2="-9.0" y2="-102.6"/><line x1="-0.0" y1="-106.0" x2="-0.0" y2="-100.0"/><line x1="9.2" y1="-105.6" x2="9.0" y2="-102.6"/><line x1="18.4" y1="-104.4" x2="17.9" y2="-101.4"/><line x1="27.4" y1="-102.4" x2="26.7" y2="-99.5"/><line x1="36.3" y1="-99.6" x2="35.2" y2="-96.8"/><line x1="44.8" y1="-96.1" x2="43.5" y2="-93.3"/><line x1="53.0" y1="-91.8" x2="50.0" y2="-86.6"/><line x1="60.8" y1="-86.8" x2="59.1" y2="-84.4"/><line x1="68.1" y1="-81.2" x2="66.2" y2="-78.9"/><line x1="75.0" y1="-75.0" x2="72.8" y2="-72.8"/><line x1="81.2" y1="-68.1" x2="78.9" y2="-66.2"/><line x1="86.8" y1="-60.8" x2="84.4" y2="-59.1"/><line x1="91.8" y1="-53.0" x2="86.6" y2="-50.0"/><line x1="96.1" y1="-44.8" x2="93.3" y2="-43.5"/><line x1="99.6" y1="-36.3" x2="96.8" y2="-35.2"/><line x1="102.4" y1="-27.4" x2="99.5" y2="-26.7"/><line x1="104.4" y1="-18.4" x2="101.4" y2="-17.9"/><line x1="105.6" y1="-9.2" x2="102.6" y2="-9.0"/></g><g class="mg-nums"><text transform="rotate(0) translate(0 -94)" text-anchor="middle">0</text><text transform="rotate(30) translate(0 -94)" text-anchor="middle">30</text><text transform="rotate(60) translate(0 -94)" text-anchor="middle">60</text><text transform="rotate(90) translate(0 -94)" text-anchor="middle">90</text><text transform="rotate(120) translate(0 -94)" text-anchor="middle">120</text><text transform="rotate(150) translate(0 -94)" text-anchor="middle">150</text><text transform="rotate(180) translate(0 -94)" text-anchor="middle">180</text><text transform="rotate(210) translate(0 -94)" text-anchor="middle">210</text><text transform="rotate(240) translate(0 -94)" text-anchor="middle">240</text><text transform="rotate(270) translate(0 -94)" text-anchor="middle">270</text><text transform="rotate(300) translate(0 -94)" text-anchor="middle">300</text><text transform="rotate(330) translate(0 -94)" text-anchor="middle">330</text></g><g class="mg-reticle"><line x1="-88" x2="88"/><line y1="-88" y2="88"/><circle r="52"/></g></g></g></svg>
+              <svg class="w-const" viewBox="-145 -135 290 270"><defs><radialGradient id="lens-vig" cx="0" cy="0" r="107" gradientUnits="userSpaceOnUse"><stop offset="0.55" stop-color="#050814" stop-opacity="0"/><stop offset="0.9" stop-color="#050814" stop-opacity="0.45"/><stop offset="1" stop-color="#050814" stop-opacity="0.8"/></radialGradient></defs><g clip-path="url(#mg-clip)"><g class="w-slot"></g><circle r="107" fill="url(#lens-vig)"/><g class="mg-motes"><circle cx="-60.0" cy="-30.0" r="0.7"/><circle cx="40.0" cy="-70.0" r="0.9"/><circle cx="70.0" cy="20.0" r="0.6"/><circle cx="-20.0" cy="60.0" r="0.8"/><circle cx="10.0" cy="-20.0" r="0.5"/><circle cx="-80.0" cy="40.0" r="0.7"/><circle cx="55.0" cy="65.0" r="0.8"/><circle cx="-35.0" cy="-75.0" r="0.6"/><circle cx="85.0" cy="-35.0" r="0.5"/><circle cx="0.0" cy="85.0" r="0.7"/></g></g></svg>
+              <svg class="w-glass" viewBox="-145 -135 290 270" aria-hidden="true"><g clip-path="url(#mg-clip)"><rect class="mg-glint" x="-60" y="-160" width="46" height="320" fill="url(#mg-glint)" transform="rotate(28)"/><ellipse cx="-40" cy="-58" rx="70" ry="34" transform="rotate(-38 -40 -58)" fill="url(#mg-shine)"/></g><path d="M -98 -40 A 106 106 0 0 1 -40 -98" fill="none" stroke="#fff" stroke-opacity="0.22" stroke-width="1.2" stroke-linecap="round"/><path d="M 78 70 A 104 104 0 0 1 30 99" fill="none" stroke="#fff" stroke-opacity="0.08" stroke-width="1" stroke-linecap="round"/><g transform="translate(-128 48)"><circle r="8.5" fill="url(#mg-pin)"/><circle r="8.5" fill="none" stroke="#1e140a" stroke-width="0.6"/><circle r="5" fill="none" stroke="#1e140a" stroke-opacity="0.5" stroke-width="0.5"/><circle r="1.8" fill="#1e140a"/></g></svg>
+            </span>
+          </a>
+          <p class="feat-name"></p>
+          <p class="feat-sub"></p>
+          <div class="feat-nav"><button type="button" class="feat-btn" data-step="-1" aria-label="Previous star">&larr;</button><span class="feat-count" aria-hidden="true">01 / 05</span><button type="button" class="feat-btn" data-step="1" aria-label="Next star">&rarr;</button></div>
+          <div class="feat-dots" role="group" aria-label="Jump to a star"></div>
+        </section>
+      </div>
+      <div class="hero-strip">
+        <div class="strip-col"><p class="label strip-label">Highlights</p><ul class="facts">
+          <li><svg class="star"><use href="#star4"/></svg><span><strong>Design lead</strong> on Final Spark, leading ~9 designers</span></li>
+          <li><svg class="star"><use href="#star4"/></svg><span><strong>Shipped</strong> a playable Game Boy horror game</span></li>
+          <li><svg class="star"><use href="#star4"/></svg><span><strong>Systems</strong>: combat, leveling, currency, progression</span></li>
+        </ul></div>
+        <div class="strip-col"><p class="label strip-label">Core strengths</p><div class="toolbar"><span class="tb-label">Design</span><span class="tb-row"><span class="tb">Combat and balance</span><span class="tb">Progression and economy</span><span class="tb">Design docs and pitches</span><span class="tb">Team leadership</span></span><span class="tb-label">Tools</span><span class="tb-row"><span class="tb">Unity</span><span class="tb">C++</span><span class="tb">Python</span><span class="tb">GB Studio</span></span></div></div>
+      </div>
+      <section class="work" id="work" aria-labelledby="work-title">
+        <div class="head head-big"><svg class="star"><use href="#star4"/></svg><h2 id="work-title">Selected work</h2></div>
+        <div class="wk-grid">
+          <article class="wk">
+            <a class="wk-link" href="#portfolio-final-spark"><div class="wk-art"><img src="img/fs-morrigan.jpg" alt="" loading="lazy" style="object-position: 50% 20%"></div><span class="wk-body"><span class="wk-role">Design lead · Current</span><span class="wk-name">Final Spark</span><span class="wk-text">Co-designed the core systems with the director and lead ~9 designers building out their content.</span><span class="wk-more">View project &rarr;</span></span></a>
+          </article>
+          <article class="wk">
+            <a class="wk-link" href="#portfolio-celestine"><div class="wk-art"><img src="img/concept-gown.jpg" alt="" loading="lazy" style="object-position: 50% 20%"></div><span class="wk-body"><span class="wk-role">Asst. game designer and PM · 2024–25</span><span class="wk-name">Celestine: One to Eleven</span><span class="wk-text">Designed the combat, leveling, currency and progression systems.</span><span class="wk-more">View project &rarr;</span></span></a>
+          </article>
+          <article class="wk">
+            <a class="wk-link" href="#portfolio-scarlet-lily"><div class="wk-art wk-pixel"><img src="img/sl-title.png" alt="" loading="lazy"></div><span class="wk-body"><span class="wk-role">Solo · Game Boy horror</span><span class="wk-name">Scarlet Lily</span><span class="wk-text">A playable horror game in GB Studio. All art and assets by me except the music.</span><span class="wk-more">View project &rarr;</span></span></a><a class="wk-play" href="https://souvreign.itch.io/scarlet-lily">Play on itch.io &rarr;</a>
+          </article>
+          <article class="wk">
+            <a class="wk-link" href="#portfolio-pavlova"><div class="wk-art"><img src="img/pav-sketch-leap.jpg" alt="" loading="lazy" style="object-position: 50% 45%"></div><span class="wk-body"><span class="wk-role">Solo · Design doc and pitch</span><span class="wk-name">Pavlova</span><span class="wk-text">A Souls-like where you fight as a ballerina, with combat built on rhythm.</span><span class="wk-more">View project &rarr;</span></span></a>
+          </article>
+        </div>
+        <p class="wk-all"><a href="#portfolio">See all six projects, including CU-Raiders and Dragons &amp; Defendants &rarr;</a></p>
+      </section>
+
+      <section id="about-philosophy">
+        <div class="head head-big"><svg class="star"><use href="#star4"/></svg><h2>Philosophy</h2></div>
+        <p class="sec-sub">Design a feeling, then build the game around it.</p>
+        <div class="prose">
+          <p>Games are meant to make players feel the fantasies that are out of reach. Making a game should always put players' feelings first, whether it's a mighty hero, a god reshaping the world, or a home renovator. When you design a game that taps into players' feelings and fantasies, the experience stays with them.</p>
+          <p>That approach runs through everything I've made, from co-designing gods, items, and secrets on Final Spark to push the fantasy of controlling gods at your whim, to a horror game that makes you feel like a child playing your first horror game on the Game Boy.</p>
+        </div>
+        <ul class="chips" aria-label="Genres I've designed for">
+          <li class="chip">Roguelike auto-battler</li>
+          <li class="chip">RPG</li>
+          <li class="chip">Souls-like</li>
+          <li class="chip">Horror</li>
+          <li class="chip">Tabletop</li>
+        </ul>
+      </section>
+
+      <section id="about-skills">
+        <div class="head head-big"><svg class="star"><use href="#star4"/></svg><h2>Skills</h2></div>
+        <div class="skill-grid">
+          <div class="sk-col sk-wide">
+            <h3 class="label">Design</h3>
+            <ul><li>Systems design</li><li>Core loop design</li><li>Combat design and balancing</li><li>Progression and economy design</li><li>Narrative design and worldbuilding</li><li>Design documentation (GDDs)</li><li>UI/UX wireframing</li><li>Tabletop game design</li></ul>
+          </div>
+          <div class="sk-col">
+            <h3 class="label">Tools</h3>
+            <ul><li>Unity</li><li>C++</li><li>Python</li><li>GB Studio</li></ul>
+          </div>
+          <div class="sk-col">
+            <h3 class="label">Art</h3>
+            <ul><li>Concept art</li><li>Digital painting</li><li>Pixel art</li><li>2D animation</li><li>Graphic design</li></ul>
+          </div>
+          <div class="sk-col">
+            <h3 class="label">Production</h3>
+            <ul><li>Team leadership</li><li>Project management</li><li>Cross-team collaboration</li></ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="about-education">
+        <div class="head head-big"><svg class="star"><use href="#star4"/></svg><h2>Education</h2></div>
+        <ul class="path">
+          <li>
+            <span class="when">Jan 2026 – present</span>
+            <h3>University of Southern California</h3>
+            <p class="deg">B.S. Computer Science (Games)</p>
+            <p class="note">Coursework: Object-Oriented Programming, Linear Algebra, Discrete Mathematics, Game System Design.</p>
+          </li>
+          <li>
+            <span class="when">Aug 2023 – Jun 2025</span>
+            <h3>Pasadena City College</h3>
+            <p class="deg">Computer Science and Game Design · GPA 3.88 / 4.0</p>
+            <p class="note">Focused on game design courses and created a short game project that was shown to publishers.</p>
+          </li>
+        </ul>
+      </section>
+    </div>
+
+    <!-- Page: Portfolio -->
+    <div class="view" id="view-portfolio">
+      <div class="page-head">
+        <p class="label">Projects</p>
+        <h1 class="page-title">Projects</h1>
+        <p class="lede">The games I've led and designed for, and my personal projects.</p>
+      </div>
+
+      <div class="tabs" role="tablist" aria-label="Projects" style="--n: 6; max-width: 920px">
+          <a class="tab" role="tab" id="tab-portfolio-final-spark" href="#portfolio-final-spark" aria-controls="panel-portfolio-final-spark" aria-selected="false"><span class="tab-star" aria-hidden="true"></span><span class="tab-name">Final Spark</span><span class="tab-sub">Design lead</span></a>
+          <a class="tab" role="tab" id="tab-portfolio-celestine" href="#portfolio-celestine" aria-controls="panel-portfolio-celestine" aria-selected="false"><span class="tab-star" aria-hidden="true"></span><span class="tab-name">Celestine</span><span class="tab-sub">Asst. designer</span></a>
+          <a class="tab" role="tab" id="tab-portfolio-cu-raiders" href="#portfolio-cu-raiders" aria-controls="panel-portfolio-cu-raiders" aria-selected="false"><span class="tab-star" aria-hidden="true"></span><span class="tab-name">CU-Raiders</span><span class="tab-sub">Board game</span></a>
+          <a class="tab" role="tab" id="tab-portfolio-scarlet-lily" href="#portfolio-scarlet-lily" aria-controls="panel-portfolio-scarlet-lily" aria-selected="false"><span class="tab-star" aria-hidden="true"></span><span class="tab-name">Scarlet Lily</span><span class="tab-sub">Game Boy horror</span></a>
+          <a class="tab" role="tab" id="tab-portfolio-game-proposal" href="#portfolio-game-proposal" aria-controls="panel-portfolio-game-proposal" aria-selected="false"><span class="tab-star" aria-hidden="true"></span><span class="tab-name">Proposal</span><span class="tab-sub">Detective RPG</span></a>
+          <a class="tab" role="tab" id="tab-portfolio-pavlova" href="#portfolio-pavlova" aria-controls="panel-portfolio-pavlova" aria-selected="false"><span class="tab-star" aria-hidden="true"></span><span class="tab-name">Pavlova</span><span class="tab-sub">Souls-like pitch</span></a>
+      </div>
+      <div class="panels">
+          <article class="plate current" id="panel-portfolio-final-spark" data-panel="portfolio-final-spark" role="tabpanel" aria-labelledby="tab-portfolio-final-spark">
+            <div class="plate-glyph" aria-hidden="true"><svg viewBox="0 0 140 92"><g class="g-lines"><line x1="20" y1="70" x2="48" y2="38"/><line x1="48" y1="38" x2="80" y2="52"/><line x1="80" y1="52" x2="104" y2="20"/><line x1="104" y1="20" x2="120" y2="62"/><line x1="120" y1="62" x2="80" y2="52"/></g><g class="g-dots"><circle cx="20" cy="70" r="3.2"/><circle cx="48" cy="38" r="2.2"/><circle cx="80" cy="52" r="2.2"/><circle cx="104" cy="20" r="2.2"/><circle cx="120" cy="62" r="2.2"/></g></svg></div>
+            <div class="tagline"><span class="label">Current project</span></div>
+            <h3>Final Spark</h3>
+            <p class="role">Design Lead</p>
+            <p class="blurb">A 3D roguelike auto-battler where you control gods from across multiple mythologies through secrets and mystery.</p>
+            <div class="fs-block"><span class="label">My role</span><p>Design lead working directly under the game director. I co-designed the game's core systems with the director: gods and classes, essences, Prime Gods, items and relics, and secrets. I also lead a team of around nine designers who build out the content within those systems, from new essences to items and relics.</p></div>
+            <div class="fs-row"><div class="fs-text"><span class="label">Gods and classes</span><p>Six gods from six pantheons, each with its own class: Anubis (Egyptian, Sage), Oya (Yoruba, Juggernaut), The Morrigan (Celtic, Sorcerer), Ganesha (Hindu, Warden), Ame-no-Uzume (Shinto, Virtuoso) and Itzpapalotl (Aztec, Reaper).</p></div><div class="fs-media"><figure class="shot fs-fig "><a class="shot-link" data-zoom data-group="final-spark" href="img/fs-god-uzume.png"><img src="img/fs-god-uzume.png" alt="Ame-no-Uzume, a Shinto Virtuoso, with her ability A Fan of Bells: her auto attacks alternate between a Bell that deals 120% damage and inflicts Ruin and a Fan that deals 60% damage and gives Attack Speed; her active makes her dance for 8 seconds, gaining 30% Attack Speed." loading="lazy"></a><figcaption>God card: Ame-no-Uzume</figcaption></figure></div></div>
+            <div class="fs-row flip"><div class="fs-text"><span class="label">Essences</span><p>Assignable passives that reshape a god's playstyle through its auto attacks, active abilities, stats or unique effects. The Dancer, for example, turns auto attacks into a slicing dance that hits every enemy around the unit, while Patient Wellspring trades early tempo for mana over a long fight.</p></div><div class="fs-media fs-pair"><figure class="shot fs-fig "><a class="shot-link" data-zoom data-group="final-spark" href="img/fs-essence-dancer.png"><img src="img/fs-essence-dancer.png" alt="Passive essence The Dancer: replaces auto attacks with a slicing dance that deals 50% of normal auto attack damage, plus 1% per 5 Attack Speed Points, to all enemies around the unit." loading="lazy"></a><figcaption>Essence: The Dancer</figcaption></figure><figure class="shot fs-fig "><a class="shot-link" data-zoom data-group="final-spark" href="img/fs-essence-wellspring.png"><img src="img/fs-essence-wellspring.png" alt="Passive essence Patient Wellspring: channel for 5 seconds to gain 5 Mana, and after 50 seconds of combat gain 5 Mana Regen for the rest of the fight." loading="lazy"></a><figcaption>Essence: Patient Wellspring</figcaption></figure></div></div>
+            <div class="fs-row"><div class="fs-text"><span class="label">Items and relics</span><p>Items are the core source of run-to-run variance, giving units buffs, boons and traits. Relics add passive effects at different tiers of strength and rarity that push the economy, items and unit strength, like R11, which makes every fifth allied auto-attack hit 25% harder.</p></div><div class="fs-media fs-narrow"><figure class="shot fs-fig "><a class="shot-link" data-zoom data-group="final-spark" href="img/fs-relic-r11.png"><img src="img/fs-relic-r11.png" alt="Relic R11: every fifth auto-attack by an allied god deals 25% more attack damage, with counters resetting each combat." loading="lazy"></a><figcaption>Relic: R11</figcaption></figure></div></div>
+            <ul class="spec fs-more"><li><span class="label">Prime Gods</span>Each Prime God gives your side of the board a unique effect, so where you place units before combat becomes a real decision.</li><li><span class="label">Secrets</span>Hidden key items and constellations carry the game's mystery, each specified from how it's found to what it looks like and how it plays, such as Gungnir, Odin's spear.</li></ul>
+          </article>
+          <article class="plate" id="panel-portfolio-celestine" data-panel="portfolio-celestine" role="tabpanel" aria-labelledby="tab-portfolio-celestine">
+            <div class="plate-glyph" aria-hidden="true"><svg viewBox="0 0 140 92"><g class="g-lines"><line x1="14" y1="30" x2="44" y2="58"/><line x1="44" y1="58" x2="76" y2="28"/><line x1="76" y1="28" x2="100" y2="60"/><line x1="100" y1="60" x2="126" y2="34"/></g><g class="g-dots"><circle cx="14" cy="30" r="3.2"/><circle cx="44" cy="58" r="2.2"/><circle cx="76" cy="28" r="2.2"/><circle cx="100" cy="60" r="2.2"/><circle cx="126" cy="34" r="2.2"/></g></svg></div>
+            <div class="tagline"><span class="when">Feb 2024 – Mar 2025</span><span class="when">Pasadena, CA</span></div>
+            <h3>Celestine: One to Eleven</h3>
+            <p class="role">Assistant Game Designer / Project Manager</p>
+            <div class="plate-hero"><figure class="shot cel-shot"><a class="shot-link" data-zoom data-group="celestine" href="img/concept-gown.jpg"><img src="img/concept-gown.jpg" alt="Character exploration for Celestine: pencil sketch of a girl with curled pigtails in a layered, ruffled gown with long sleeves, pointing to the side." loading="lazy"></a><figcaption>Character exploration for Celestine</figcaption></figure></div>
+            <ul class="spec">
+              <li><span class="label">Combat and leveling</span>Designed the game's main combat and leveling system.</li>
+              <li><span class="label">Supporting systems</span>Designed the currency and progression systems around it.</li>
+              <li><span class="label">World and loop</span>Worked with the lead designer to flesh out the world, story, characters and core gameplay loop.</li>
+              <li><span class="label">Project management</span>Coordinated the gameplay, art and writing teams throughout development.</li>
+            </ul>
+          </article>
+          <article class="plate" id="panel-portfolio-cu-raiders" data-panel="portfolio-cu-raiders" role="tabpanel" aria-labelledby="tab-portfolio-cu-raiders">
+            <div class="plate-glyph" aria-hidden="true"><svg viewBox="0 0 140 92"><g class="g-lines"><line x1="30" y1="20" x2="96" y2="24"/><line x1="96" y1="24" x2="104" y2="72"/><line x1="104" y1="72" x2="26" y2="66"/><line x1="26" y1="66" x2="30" y2="20"/></g><g class="g-dots"><circle cx="30" cy="20" r="3.2"/><circle cx="96" cy="24" r="2.2"/><circle cx="104" cy="72" r="2.2"/><circle cx="26" cy="66" r="2.2"/></g></svg></div>
+          <div class="tagline"><span class="when">Tabletop board game</span><span class="when">Team of 4</span></div>
+          <h3>CU-Raiders</h3>
+          <p class="role">Designer and producer</p>
+          <div class="plate-hero"><div class="gallery">
+            <figure class="shot wide"><a class="shot-link" data-zoom data-group="cu-raiders" href="img/cu-raiders-overview.jpg"><img src="img/cu-raiders-overview.jpg" alt="CU-Raiders title art, the hex tile designs, the board mid-game with player pieces and cards, and a sheet of artifact cards." loading="lazy"></a><figcaption>Title art, tile design, the board in play, and artifact cards</figcaption></figure>
+            <figure class="shot"><a class="shot-link" data-zoom data-group="cu-raiders" href="img/cu-raiders-rules-scoring.jpg"><img src="img/cu-raiders-rules-scoring.jpg" alt="Rulebook spread listing the artifacts in each region, their point values, and the set bonuses." loading="lazy"></a><figcaption>Rulebook: artifacts, points and sets</figcaption></figure>
+            <figure class="shot"><a class="shot-link" data-zoom data-group="cu-raiders" href="img/cu-raiders-rules-setup.jpg"><img src="img/cu-raiders-rules-setup.jpg" alt="Rulebook spread with the story intro, setup steps for the honeycomb map, and the turn procedure." loading="lazy"></a><figcaption>Rulebook: story, setup and procedure</figcaption></figure>
+          </div></div>
+          <p class="blurb">A competitive set-collection game for four players. Curators race across a hidden map of hex tiles around a museum, collecting artifacts from the desert, the tundra and the plains. After eight rounds, whoever holds the most valuable collection becomes the museum's permanent curator.</p>
+          <blockquote class="goal">
+            <span class="label">Design goal</span>
+            <p>Players will feel excitement and competition when exploring the unknown map collecting artifacts while gaining the satisfaction of set completion.</p>
+          </blockquote>
+          <ul class="spec">
+            <li><span class="label">My role</span>Designer and producer on a team of four. I focused on making the game's systems work together and on getting the game ready to ship.</li>
+            <li><span class="label">Hidden map</span>Honeycomb tiles start face-down around the museum, so every game's map is shuffled and revealed as players explore.</li>
+            <li><span class="label">Exploration</span>Players move two hexes a turn and draw from that region's deck. Cards can be artifacts, events or junk, and a tile goes dead once it has been left.</li>
+            <li><span class="label">Set collection</span>Artifacts score 3 to 10 points alone, while sets such as the Trinity of Japan or the Set of Death score up to 45. With a four-artifact hand limit, every keep is a choice.</li>
+            <li><span class="label">Trading</span>Players can trade freely on their turn without spending it, so deals and rivalries shape who completes which set.</li>
+          </ul>
+        </article>
+          <article class="plate" id="panel-portfolio-scarlet-lily" data-panel="portfolio-scarlet-lily" role="tabpanel" aria-labelledby="tab-portfolio-scarlet-lily">
+            <div class="plate-glyph" aria-hidden="true"><svg viewBox="0 0 140 92"><g class="g-lines"><line x1="64" y1="14" x2="64" y2="48"/><line x1="64" y1="48" x2="30" y2="40"/><line x1="30" y1="40" x2="64" y2="48"/><line x1="64" y1="48" x2="98" y2="40"/><line x1="98" y1="40" x2="64" y2="48"/><line x1="64" y1="48" x2="64" y2="80"/></g><g class="g-dots"><circle cx="64" cy="14" r="3.2"/><circle cx="64" cy="48" r="2.2"/><circle cx="30" cy="40" r="2.2"/><circle cx="98" cy="40" r="2.2"/><circle cx="64" cy="80" r="2.2"/></g></svg></div>
+          <div class="tagline"><span class="when">Game Boy horror game</span><span class="when">Solo project</span><span class="when">GB Studio</span></div>
+          <h3>Scarlet Lily</h3>
+          <div class="plate-hero sl-hero"><div class="art-hero"><video class="art-hero-video" src="img/sl-header.mp4" poster="img/sl-header-poster.png" autoplay muted loop playsinline preload="metadata" aria-label="Animated scene from Scarlet Lily: a girl with a lily in her hair turns around to show a face covered in lilies."></video></div><figure class="shot pixel"><a class="shot-link" data-zoom data-group="sl-project" href="img/sl-title.png"><img src="img/sl-title.png" alt="Scarlet Lily title screen: the game title above a pale lily, in four Game Boy greens." width="160" height="144"></a><figcaption>Title screen at the Game Boy's native 160 × 144</figcaption></figure></div>
+          <p class="blurb">A short horror adventure made in GB Studio to recreate the feeling of Japanese horror games on a Game Boy. It's released on itch.io and playable in the browser.</p>
+              <ul class="spec">
+                <li><span class="label">Art and assets</span>Made all of the art and assets myself, everything except the music.</li>
+                <li><span class="label">Constraints</span>Built within Game Boy limits: a 160 × 144 screen, four shades and two buttons.</li>
+              </ul>
+              <div class="actions"><a class="btn" href="https://souvreign.itch.io/scarlet-lily">Play on itch.io</a></div>
+        </article>
+          <article class="plate" id="panel-portfolio-game-proposal" data-panel="portfolio-game-proposal" role="tabpanel" aria-labelledby="tab-portfolio-game-proposal">
+            <div class="plate-glyph" aria-hidden="true"><svg viewBox="0 0 140 92"><g class="g-lines"><line x1="70" y1="14" x2="70" y2="80"/><line x1="28" y1="28" x2="112" y2="28"/><line x1="28" y1="28" x2="20" y2="58"/><line x1="28" y1="28" x2="40" y2="58"/><line x1="112" y1="28" x2="100" y2="58"/><line x1="112" y1="28" x2="122" y2="58"/></g><g class="g-dots"><circle cx="70" cy="14" r="3.2"/><circle cx="28" cy="28" r="2.2"/><circle cx="112" cy="28" r="2.2"/><circle cx="20" cy="58" r="2.2"/><circle cx="40" cy="58" r="2.2"/><circle cx="100" cy="58" r="2.2"/><circle cx="122" cy="58" r="2.2"/><circle cx="70" cy="80" r="2.2"/></g></svg></div>
+          <div class="tagline"><span class="when">Pitch document</span><span class="when">Detective / lawyer RPG</span><span class="when">Working title</span></div>
+          <h3>Game Proposal: Dragons &amp; Defendants</h3>
+          <div class="plate-hero"><div class="gallery">
+            <figure class="shot"><a class="shot-link" data-zoom data-group="proposal" href="img/game-proposal-overview.jpg"><img src="img/game-proposal-overview.jpg" alt="First page of the Dragons and Defendants proposal: the title sign, then the essence, what draws players in, and a loop diagram of evidence collection, case building and courtroom showdown." loading="lazy"></a><figcaption>Proposal: essence, hook and core loop</figcaption></figure>
+            <figure class="shot"><a class="shot-link" data-zoom data-group="proposal" href="img/game-proposal-scope.jpg"><img src="img/game-proposal-scope.jpg" alt="Proposal page listing goals and scope, a 12-month milestone table, the team breakdown by role, and the tools." loading="lazy"></a><figcaption>Proposal: scope, timeline, team and tech</figcaption></figure>
+          </div></div>
+          <p class="blurb">A pitch for a third-person detective and lawyer role-playing game that combines the essence of Ace Attorney, the detective gameplay of Disco Elysium, and the rules and laws of fantasy worlds. You play a first-year associate at a fantasy law firm, handed three major cases that could make you a partner.</p>
+          <blockquote class="goal">
+            <span class="label">The hook</span>
+            <p>&ldquo;Don't invite vampires in.&rdquo; &ldquo;Don't eat fae food.&rdquo; Everyone knows the rules from fairy tales. Here they are the law.</p>
+          </blockquote>
+          <ul class="spec">
+            <li><span class="label">Core loop</span>Each case runs through three segments: a 3D detective section to explore the scene and collect evidence, an interview and case-building section, then an Ace Attorney-style courtroom showdown.</li>
+            <li><span class="label">Fantasy law</span>Investigations run on the practices and laws of witches, and on witnesses who give their clues as riddles. Veterans get new rules to navigate, and new players get a more whimsical world.</li>
+            <li><span class="label">Visual direction</span>2D visual-novel characters, isometric 3D investigation scenes, and a contemporary fantasy city where phones and cars exist alongside magic.</li>
+            <li><span class="label">Scope</span>Three full cases of about 20 minutes each, three short cutscenes, three modeled crime locations, one rigged 3D protagonist, 7 to 10 2D characters, and partial voice acting.</li>
+            <li><span class="label">Production plan</span>A 12-month timeline from pre-production to a gold master shown at expo, for a team of 22 plus the director, built in Unity with Photoshop, Blender and Maya for art.</li>
+          </ul>
+        </article>
+          <article class="plate" id="panel-portfolio-pavlova" data-panel="portfolio-pavlova" role="tabpanel" aria-labelledby="tab-portfolio-pavlova">
+            <div class="plate-glyph" aria-hidden="true"><svg viewBox="0 0 140 92"><g class="g-lines"><line x1="40" y1="14" x2="50" y2="32"/><line x1="50" y1="32" x2="20" y2="26"/><line x1="50" y1="32" x2="86" y2="14"/><line x1="50" y1="32" x2="62" y2="50"/><line x1="62" y1="50" x2="58" y2="84"/><line x1="62" y1="50" x2="128" y2="34"/></g><g class="g-dots"><circle cx="40" cy="14" r="3.2"/><circle cx="50" cy="32" r="2.2"/><circle cx="20" cy="26" r="2.2"/><circle cx="86" cy="14" r="2.2"/><circle cx="62" cy="50" r="2.2"/><circle cx="58" cy="84" r="2.2"/><circle cx="128" cy="34" r="2.2"/></g></svg></div>
+          <div class="tagline"><span class="when">Game design document and pitch</span><span class="when">Souls-like action RPG</span><span class="when">Solo</span></div>
+          <h3>Pavlova</h3>
+          <div class="plate-hero pav-duo"><figure class="art-piece pav-fig"><a class="art-frame natural" data-zoom data-group="pavlova" href="img/pav-sketch-pose.jpg"><img src="img/pav-sketch-pose.jpg" alt="Gesture sketch of a ballerina balancing on one pointed foot with arms outstretched." loading="lazy"></a><figcaption><span class="art-name">Anya, pose study</span><span class="art-meta">Gesture sketch</span></figcaption></figure><figure class="art-piece pav-fig"><a class="art-frame natural" data-zoom data-group="pavlova" href="img/pav-sketch-leap.jpg"><img src="img/pav-sketch-leap.jpg" alt="Gesture sketch of a ballerina in a split leap." loading="lazy"></a><figcaption><span class="art-name">Anya, leap study</span><span class="art-meta">Gesture sketch</span></figcaption></figure></div>
+          <p class="blurb">A Souls-like, combat-focused game about what it means to be human. You play as Anya, a ballerina fighting through a post-apocalyptic Victorian London plagued by the sounds of a cosmic horror, with combat built on music and rhythm.</p>
+          <blockquote class="goal">
+            <span class="label">Pitch quote</span>
+            <p>&ldquo;The only reason for mastering technique is to make sure the body does not prevent the soul from expressing itself.&rdquo; &mdash; La Meri</p>
+          </blockquote>
+          <ul class="spec">
+            <li><span class="label">Rhythm combat</span>Attacks landed on the beat hit harder. Players string dance combos together with the right timing, and some combos don't work on some enemies, so they have to adapt their dance to what works.</li>
+            <li><span class="label">Music and augments</span>Leg augments act like weapons, with one equipped at a time. Music is what makes or breaks a fight: each enemy type has to be matched with the right music and moves.</li>
+            <li><span class="label">Core loop</span>Enter an area, explore and uncover what happened there, optionally help locals, and fight through smaller enemies to the area's boss.</li>
+            <li><span class="label">Helping London</span>Helping residents earns boons such as items, shortcuts, secret areas and help with bosses, and in rare cases changes the story's outcome.</li>
+            <li><span class="label">Hard choices</span>Residents force moral dilemmas, like killing someone to make your life easier or saving them and making it harder. These choices decide the ending.</li>
+            <li><span class="label">Death as learning</span>Each fight ends one way: you win or you die. As in any Souls-like, dying is part of learning, and you return to the last save point you used.</li>
+          </ul>
+          <div class="pav-wide"><figure class="art-piece pav-fig"><a class="art-frame natural" data-zoom data-group="pavlova" href="img/pav-ui-combat.jpg"><img src="img/pav-ui-combat.jpg" alt="UI mockups for regular combat and exploration, labelling the selected music, combo meter, beat indicator, health and magic." loading="lazy"></a><figcaption><span class="art-name">Combat UI</span><span class="art-meta">UI sketch</span></figcaption></figure><p class="pav-side"><span class="label">Combat UI</span>The selected music, combo counter and beat indicator sit at the edges, so the dancer and the enemy stay at the centre of the screen.</p></div>
+          <div class="pav-split"><div class="pav-block">
+            <span class="label">The story</span>
+            <p>In an alternate Victorian era, humans drew magic from sounds coming from space, until it twisted minds and bodies into an affliction called the Aria. Queen Victoria sealed the afflicted away in a lost catacomb, the Concert Hall, but the tune was made by eldritch horrors seeking a new civilisation to take hold of. Decades later, Anya, a &ldquo;Deafened&rdquo; recruit immune to the Aria, is sent into an overrun London to find the source.</p>
+          </div><figure class="art-piece pav-fig"><a class="art-frame natural" data-zoom data-group="pavlova" href="img/concept-mask-sheet.jpg"><img src="img/concept-mask-sheet.jpg" alt="Concept sheet for Anya: a masked dancer with ornate bladed leg augments, with close-ups of the mask and both legs." loading="lazy"></a><figcaption><span class="art-name">Anya concept</span><span class="art-meta">Character concept</span></figcaption></figure></div>
+          <div class="pav-block">
+            <span class="label">Game flow</span>
+            <ol class="route"><li class="end"><span>St Paul's</span></li><li><span>Big Ben</span></li><li><span>Westminster Abbey</span></li><li><span>Buckingham Palace</span></li><li><span>Tower of London</span></li><li><span>Tower Bridge</span></li><li class="end"><span>The Concert Hall</span></li></ol>
+            <p class="route-note">Big Ben and Westminster Abbey can be taken in either order. The final bosses open only after visiting Queen Victoria.</p>
+          </div>
+          <div class="pav-boss"><figure class="art-piece pav-fig"><a class="art-frame natural" data-zoom data-group="pavlova" href="img/pav-ui-boss.jpg"><img src="img/pav-ui-boss.jpg" alt="UI mockup for a boss fight on a stage between two curtains, with beat indicators on either side and a boss health bar." loading="lazy"></a><figcaption><span class="art-name">Boss combat UI</span><span class="art-meta">UI sketch</span></figcaption></figure></div>
+          <ul class="spec pav-values">
+            <li><span class="label">Theme</span>Dark gothic Victorian, built to bring a steady sense of dread.</li>
+            <li><span class="label">Decisions</span>Most choices don't change the overall story, but every choice changes the world.</li>
+            <li><span class="label">Challenge</span>Mastering the combat. It's most of the game, so it should never feel like a nuisance.</li>
+            <li><span class="label">Emotion</span>Constant unease. Not a horror game, but tension builds and releases like one.</li>
+          </ul>
+          <p class="pav-comps"><span class="label">Comparable titles</span>Elden Ring, Dark Souls III and Lies of P</p>
+        </article>
+      </div>
+    </div>
+
+    <!-- Page: Art -->
+    <div class="view" id="view-art">
+      <div class="page-head">
+        <p class="label">Art</p>
+        <h1 class="page-title">Art</h1>
+        <p class="lede">Art and assets I've made, grouped by project.</p>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Art" style="--n: 4; max-width: 1040px">
+          <a class="tab" role="tab" id="tab-art-scarlet-lily" href="#art-scarlet-lily" aria-controls="panel-art-scarlet-lily" aria-selected="false"><span class="tab-star" aria-hidden="true"></span><span class="tab-name">Scarlet Lily</span><span class="tab-sub">Pixel art · 7 pieces</span></a>
+          <a class="tab" role="tab" id="tab-art-animation" href="#art-animation" aria-controls="panel-art-animation" aria-selected="false"><span class="tab-star" aria-hidden="true"></span><span class="tab-name">Animated short</span><span class="tab-sub">2D animation · 50 seconds</span></a>
+          <a class="tab" role="tab" id="tab-art-concepts" href="#art-concepts" aria-controls="panel-art-concepts" aria-selected="false"><span class="tab-star" aria-hidden="true"></span><span class="tab-name">Character concept work</span><span class="tab-sub">Sketches and paintings · 3 pieces</span></a>
+          <a class="tab" role="tab" id="tab-art-creatures" href="#art-creatures" aria-controls="panel-art-creatures" aria-selected="false"><span class="tab-star" aria-hidden="true"></span><span class="tab-name">Creature concepts</span><span class="tab-sub">Ender Whale · 3 pieces</span></a>
+      </div>
+      <div class="panels art-panels">
+          <article class="plate" id="panel-art-scarlet-lily" data-panel="art-scarlet-lily" role="tabpanel" aria-labelledby="tab-art-scarlet-lily">
+            <div class="plate-glyph" aria-hidden="true"><svg viewBox="0 0 140 92"><g class="g-lines"><line x1="64" y1="14" x2="64" y2="48"/><line x1="64" y1="48" x2="30" y2="40"/><line x1="64" y1="48" x2="98" y2="40"/><line x1="64" y1="48" x2="64" y2="80"/></g><g class="g-dots"><circle cx="64" cy="14" r="3.2"/><circle cx="64" cy="48" r="2.2"/><circle cx="30" cy="40" r="2.2"/><circle cx="98" cy="40" r="2.2"/><circle cx="64" cy="80" r="2.2"/></g></svg></div>
+          <div class="tagline"><span class="when">Pixel art</span><span class="when">Game Boy</span><span class="when">7 pieces</span></div>
+          <h3>Scarlet Lily</h3>
+          <p class="blurb">Pixel art for my Game Boy horror game, made within the Game Boy's 160&nbsp;×&nbsp;144 screen and four shades of green.</p>
+          <div class="art-hero"><video class="art-hero-video" src="img/sl-header.mp4" poster="img/sl-header-poster.png" autoplay muted loop playsinline preload="metadata" aria-label="Animated scene from Scarlet Lily: a girl with a lily in her hair turns around to show a face covered in lilies."></video></div>
+          <div class="ring-wrap">
+            <div class="ring-stage" aria-roledescription="carousel" aria-label="Scarlet Lily art. Select the piece in front to see it larger.">
+              <div class="ring">
+              <figure class="ring-item" data-name="Title screen" data-meta="160 × 144"><a class="art-frame pixel" href="img/sl-title.png" target="_blank" rel="noopener" tabindex="-1"><img src="img/sl-title.png" alt="Scarlet Lily title screen: the game title above a pale lily."></a></figure>
+              <figure class="ring-item" data-name="Bus scene" data-meta="160 × 144"><a class="art-frame pixel" href="img/sl-bus.png" target="_blank" rel="noopener" tabindex="-1"><img src="img/sl-bus.png" alt="A bus parked in front of a dense forest under a starry sky."></a></figure>
+              <figure class="ring-item" data-name="Forest" data-meta="160 × 144"><a class="art-frame pixel" href="img/sl-forest.png" target="_blank" rel="noopener" tabindex="-1"><img src="img/sl-forest.png" alt="A wall of round treetops over dark trunks, with stars above."></a></figure>
+              <figure class="ring-item" data-name="Character portrait" data-meta="160 × 144"><a class="art-frame pixel" href="img/sl-portrait.png" target="_blank" rel="noopener" tabindex="-1"><img src="img/sl-portrait.png" alt="Portrait of a girl with short dark hair."></a></figure>
+              <figure class="ring-item" data-name="Tileset" data-meta="256 × 256"><a class="art-frame pixel" href="img/sl-tiles.png" target="_blank" rel="noopener" tabindex="-1"><img src="img/sl-tiles.png" alt="Tiles for grass, stone walls, trees, a bus, a school building and two shops."></a></figure>
+              <figure class="ring-item" data-name="Forest at night" data-meta="160 × 144"><a class="art-frame pixel" href="img/sl-forest-night.png" target="_blank" rel="noopener" tabindex="-1"><img src="img/sl-forest-night.png" alt="A pale figure standing among the trees beside a gnarled dead tree."></a></figure>
+              <figure class="ring-item" data-name="Horror portrait" data-meta="160 × 144"><a class="art-frame pixel" href="img/sl-portrait-2.png" target="_blank" rel="noopener" tabindex="-1"><img src="img/sl-portrait-2.png" alt="A face with tangled growths covering the eyes."></a></figure>
+              </div>
+            </div>
+            <button type="button" class="feat-btn ring-arrow ring-prev" aria-label="Previous piece">&larr;</button>
+            <button type="button" class="feat-btn ring-arrow ring-next" aria-label="Next piece">&rarr;</button>
+            <p class="ring-cap" aria-live="polite"><span class="art-name"></span><span class="art-meta"></span><span class="ring-count"></span></p>
+          </div>
+          <div class="actions"><a class="btn" href="#portfolio-scarlet-lily">See the project</a></div>
+        </article>
+          <article class="plate" id="panel-art-animation" data-panel="art-animation" role="tabpanel" aria-labelledby="tab-art-animation">
+            <div class="plate-glyph" aria-hidden="true"><svg viewBox="0 0 140 92"><g class="g-lines"><line x1="14" y1="46" x2="42" y2="28"/><line x1="42" y1="28" x2="70" y2="22"/><line x1="70" y1="22" x2="98" y2="28"/><line x1="98" y1="28" x2="126" y2="46"/><line x1="126" y1="46" x2="98" y2="64"/><line x1="98" y1="64" x2="70" y2="70"/><line x1="70" y1="70" x2="42" y2="64"/><line x1="42" y1="64" x2="14" y2="46"/></g><g class="g-dots"><circle cx="70" cy="46" r="3.2"/><circle cx="14" cy="46" r="2.2"/><circle cx="42" cy="28" r="2.2"/><circle cx="70" cy="22" r="2.2"/><circle cx="98" cy="28" r="2.2"/><circle cx="126" cy="46" r="2.2"/><circle cx="98" cy="64" r="2.2"/><circle cx="70" cy="70" r="2.2"/><circle cx="42" cy="64" r="2.2"/></g></svg></div>
+          <div class="tagline"><span class="when">2D animation</span><span class="when">About 50 seconds</span></div>
+          <h3>Animated short</h3>
+          <p class="blurb">A short hand-drawn 2D animation.</p>
+          <div class="art-film"><video src="img/animation.mp4" poster="img/animation-poster.jpg" controls muted playsinline preload="metadata" aria-label="Animated short: a girl covers her eyes, and handwritten lines ask whether there is a wish she really wants."></video></div>
+        </article>
+          <article class="plate" id="panel-art-concepts" data-panel="art-concepts" role="tabpanel" aria-labelledby="tab-art-concepts">
+            <div class="plate-glyph" aria-hidden="true"><svg viewBox="0 0 140 92"><g class="g-lines"><line x1="70" y1="12" x2="70" y2="32"/><line x1="70" y1="32" x2="34" y2="42"/><line x1="70" y1="32" x2="106" y2="42"/><line x1="70" y1="32" x2="70" y2="58"/><line x1="70" y1="58" x2="50" y2="84"/><line x1="70" y1="58" x2="90" y2="84"/></g><g class="g-dots"><circle cx="70" cy="12" r="3.2"/><circle cx="70" cy="32" r="2.2"/><circle cx="34" cy="42" r="2.2"/><circle cx="106" cy="42" r="2.2"/><circle cx="70" cy="58" r="2.2"/><circle cx="50" cy="84" r="2.2"/><circle cx="90" cy="84" r="2.2"/></g></svg></div>
+          <div class="tagline"><span class="when">Character design</span><span class="when">3 pieces</span></div>
+          <h3>Character concept work</h3>
+          <p class="blurb">Sketches and paintings exploring characters, costumes and silhouettes. Select a piece to see it larger.</p>
+          <div class="art-grid concepts">
+            <figure class="art-piece"><a class="art-frame free" data-zoom data-group="concepts" href="img/concept-gown.jpg" target="_blank" rel="noopener"><img src="img/concept-gown.jpg" alt="Character exploration for Celestine: pencil sketch of a girl with curled pigtails in a layered, ruffled gown with long sleeves, pointing to the side." loading="lazy"></a><figcaption><span class="art-name">Character exploration for Celestine</span><span class="art-meta">Digital sketch</span></figcaption></figure>
+            <figure class="art-piece"><a class="art-frame free" data-zoom data-group="concepts" href="img/concept-gasmask.jpg" target="_blank" rel="noopener"><img src="img/concept-gasmask.jpg" alt="Nuke devil: painting of a hunched figure in a yellow cloak and black gas mask, green slime dripping from the mask, in a dark green forest." loading="lazy"></a><figcaption><span class="art-name">Nuke devil</span><span class="art-meta">Digital painting</span></figcaption></figure>
+            <figure class="art-piece"><a class="art-frame free" data-zoom data-group="concepts" href="img/concept-mask-sheet.jpg" target="_blank" rel="noopener"><img src="img/concept-mask-sheet.jpg" alt="Concept sheet for Pavlova: a masked figure with ornate bladed legs, with close-ups of the mask and both leg pieces." loading="lazy"></a><figcaption><span class="art-name">Concept for Pavlova</span><span class="art-meta">Digital sketch</span></figcaption></figure>
+          </div>
+        </article>
+          <article class="plate" id="panel-art-creatures" data-panel="art-creatures" role="tabpanel" aria-labelledby="tab-art-creatures">
+            <div class="plate-glyph" aria-hidden="true"><svg viewBox="0 0 140 92"><g class="g-lines"><line x1="18" y1="40" x2="44" y2="30"/><line x1="44" y1="30" x2="80" y2="30"/><line x1="80" y1="30" x2="108" y2="42"/><line x1="108" y1="42" x2="128" y2="30"/><line x1="108" y1="42" x2="130" y2="58"/><line x1="108" y1="42" x2="80" y2="58"/><line x1="80" y1="58" x2="44" y2="56"/><line x1="44" y1="56" x2="18" y2="40"/></g><g class="g-dots"><circle cx="18" cy="40" r="3.2"/><circle cx="44" cy="30" r="2.2"/><circle cx="80" cy="30" r="2.2"/><circle cx="108" cy="42" r="2.2"/><circle cx="128" cy="30" r="2.2"/><circle cx="130" cy="58" r="2.2"/><circle cx="80" cy="58" r="2.2"/><circle cx="44" cy="56" r="2.2"/></g></svg></div>
+          <div class="tagline"><span class="when">Creature design</span><span class="when">3 pieces</span></div>
+          <h3>Creature concepts</h3>
+          <p class="blurb">The Ender Whale, from a finished painting back to its shape blockout and turnaround. Select a piece to see it larger.</p>
+          <div class="art-grid creatures">
+            <figure class="art-piece wide"><a class="art-frame natural" data-zoom data-group="creatures" href="img/creature-whale-painting.jpg"><img src="img/creature-whale-painting.jpg" alt="Ender Whale: painting of a humpback whale swimming through a starry sky above a sea of cloud, with a crescent moon and a galaxy behind it and a row of eyes along its side." loading="lazy"></a><figcaption><span class="art-name">Ender Whale</span><span class="art-meta">Digital painting</span></figcaption></figure>
+            <figure class="art-piece"><a class="art-frame natural" data-zoom data-group="creatures" href="img/creature-whale-blockout.jpg"><img src="img/creature-whale-blockout.jpg" alt="Rough block sketch of the whale from the side and from above, built from rectangles." loading="lazy"></a><figcaption><span class="art-name">Shape blockout</span><span class="art-meta">Digital sketch</span></figcaption></figure>
+            <figure class="art-piece"><a class="art-frame natural" data-zoom data-group="creatures" href="img/creature-whale-sheet.jpg"><img src="img/creature-whale-sheet.jpg" alt="Turnaround: colour sketch of the whale from the side and above in dark purple and black with glowing green eyes and star markings, a six-colour palette, and a note showing the eye opening to attack." loading="lazy"></a><figcaption><span class="art-name">Turnaround</span><span class="art-meta">Digital sketch</span></figcaption></figure>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <!-- Page: Résumé -->
+    <div class="view" id="view-resume">
+      <div class="page-head">
+        <p class="label">Résumé</p>
+        <h1 class="page-title">Résumé</h1>
+        <p class="lede">Experience, education and skills on one page.</p>
+        <div class="actions"><a class="btn" href="Edward-Liu-Resume.pdf" download>Download PDF</a><a class="btn ghost" href="Edward-Liu-Resume.pdf" target="_blank" rel="noopener">Open PDF</a></div>
+        
+      </div>
+      <figure class="resume-sheet"><a class="shot-link" data-zoom data-group="resume" href="img/resume-page.png"><img src="img/resume-page.png" alt="Edward (Shengyu) Liu's résumé. Summary: game design student focused on player-centric core loops and systems. Experience: Design Lead on Final Spark (08/2025 to present), co-designing core systems with the game director and leading about nine designers; Assistant Game Designer and Project Manager on Celestine: One to Eleven (02/2024 to 03/2025), creating the combat, leveling, currency and progression systems. Education: Pasadena City College, Computer Science and Game Design, GPA 3.88; University of Southern California, B.S. Computer Science (Games), 01/2026 to present. Skills: C++, Python, Unity, gameplay systems design, systems documentation, 2D art and graphic design, cross-disciplinary teamwork." loading="lazy"></a><figcaption class="art-name" hidden>Résumé</figcaption></figure>
+    </div>
+  </main>
+
+  <aside class="contact" aria-label="Contact">
+    <div class="head head-big"><svg class="star"><use href="#star4"/></svg><h2>Contact</h2></div>
+    <p class="email"><a href="mailto:eddyliu9073@gmail.com">eddyliu9073@gmail.com</a></p>
+  </aside>
+
+  <footer>Edward (Shengyu) Liu · Game designer</footer>
+
+  <div class="lightbox" role="dialog" aria-modal="true" aria-label="Artwork viewer" hidden>
+    <button type="button" class="lb-close" aria-label="Close">&times;</button>
+    <button type="button" class="lb-prev feat-btn" aria-label="Previous piece">&larr;</button>
+    <figure class="lb-fig"><img class="lb-img" alt=""><figcaption><span class="art-name lb-name"></span><span class="art-meta lb-meta"></span><span class="ring-count lb-count"></span></figcaption></figure>
+    <button type="button" class="lb-next feat-btn" aria-label="Next piece">&rarr;</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  var names = ['home', 'portfolio', 'art', 'resume'];
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    Array.prototype.forEach.call(document.querySelectorAll('.art-hero-video'), function (v) { v.removeAttribute('autoplay'); v.pause(); v.setAttribute('controls', ''); });
+  }
+  var root = document.documentElement;
+  var first = true;
+  function show() {
+    var hash = location.hash.replace('#', '');
+    var name = hash.split('-')[0];
+    if (name === 'about') { name = 'home'; if (hash === 'about') hash = 'about-philosophy'; }
+    if (name === 'work') name = 'home';
+    if (names.indexOf(name) === -1) { name = 'home'; hash = ''; }
+    names.forEach(function (n) {
+      document.getElementById('view-' + n).classList.toggle('active', n === name);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.top nav a'), function (a) {
+      if (a.getAttribute('data-view') === name) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
+    });
+    var target = hash && hash !== name ? document.getElementById(hash) : null;
+    if (name === 'portfolio' || name === 'art') {
+      var view = document.getElementById('view-' + name);
+      var panels = view.querySelectorAll('.panels .plate');
+      var pick = view.querySelector('[data-panel="' + hash + '"]') || panels[0];
+      view.querySelector('.tabs').style.setProperty('--lit', Array.prototype.indexOf.call(panels, pick));
+      Array.prototype.forEach.call(view.querySelectorAll('.panels video'), function (v) { if (!pick.contains(v)) v.pause(); else if (v.hasAttribute('autoplay')) { var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); } });
+      Array.prototype.forEach.call(panels, function (pnl) {
+        var on = pnl === pick;
+        pnl.classList.toggle('active', on);
+        var t = document.getElementById('tab-' + pnl.getAttribute('data-panel'));
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        t.setAttribute('tabindex', on ? '0' : '-1');
+      });
+      target = null;
+    }
+    if (target) target.scrollIntoView();
+    else if (!first) window.scrollTo(0, 0);
+    first = false;
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.tabs'), function (tabList) {
+  tabList.addEventListener('keydown', function (e) {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    var all = Array.prototype.slice.call(tabList.querySelectorAll('.tab'));
+    var i = all.indexOf(document.activeElement);
+    if (i === -1) return;
+    var next = all[(i + (e.key === 'ArrowRight' ? 1 : all.length - 1)) % all.length];
+    next.focus(); location.hash = next.getAttribute('href');
+    e.preventDefault();
+  });
+  });
+
+  // Revolving art wheel
+  Array.prototype.forEach.call(document.querySelectorAll('.ring-wrap'), function (wrap) {
+    var stage = wrap.querySelector('.ring-stage'), ring = wrap.querySelector('.ring');
+    var items = Array.prototype.slice.call(wrap.querySelectorAll('.ring-item')), n = items.length, step = 360 / n;
+    var cap = wrap.querySelector('.ring-cap'), capName = cap.querySelector('.art-name'), capMeta = cap.querySelector('.art-meta'), capCount = cap.querySelector('.ring-count');
+    var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var rot = 0, goal = null, hold = 0, hover = false, drag = null, front = -1, last = 0;
+    items.forEach(function (it, k) { it.style.setProperty('--a', (k * step) + 'deg'); });
+    function size() {
+      var w = Math.max(220, Math.min(460, stage.clientWidth * (stage.clientWidth < 560 ? 0.72 : 0.58)));
+      wrap.style.setProperty('--w', w + 'px');
+      wrap.style.setProperty('--r', Math.round(w * 0.5 / Math.tan(Math.PI / n) + 18) + 'px');
+    }
+    size(); window.addEventListener('resize', size);
+    function pad(v) { return (v < 10 ? '0' : '') + v; }
+    function paint() {
+      ring.style.setProperty('--rot', rot.toFixed(2) + 'deg');
+      var f = ((Math.round(-rot / step) % n) + n) % n;
+      items.forEach(function (it, k) {
+        var a = ((k * step + rot) % 360 + 540) % 360 - 180, c = Math.cos(a * Math.PI / 180);
+        it.style.opacity = (0.25 + 0.75 * Math.max(0, c)).toFixed(3);
+        it.style.filter = 'brightness(' + (0.45 + 0.55 * Math.max(0, c)).toFixed(3) + ')';
+      });
+      if (f !== front) {
+        if (front >= 0) items[front].classList.remove('front');
+        front = f; items[f].classList.add('front');
+        capName.textContent = items[f].getAttribute('data-name');
+        capMeta.textContent = items[f].getAttribute('data-meta');
+        capCount.textContent = pad(f + 1) + ' / ' + pad(n);
+      }
+    }
+    function visible() { return !document.hidden && wrap.offsetParent !== null; }
+    function go(k) { goal = -k * step + Math.round((rot + k * step) / 360) * 360; var d = goal - rot; if (d > 180) goal -= 360; if (d < -180) goal += 360; hold = performance.now() + 4000; }
+    function stepBy(d) { go(((Math.round(-rot / step) + d) % n + n) % n); goal = Math.round(rot / step) * step - d * step; }
+    function frame(now) {
+      var dt = Math.min(0.05, (now - (last || now)) / 1000); last = now;
+      if (visible()) {
+        if (goal !== null) {
+          rot += (goal - rot) * Math.min(1, dt * 7);
+          if (Math.abs(goal - rot) < 0.05) { rot = goal; goal = null; }
+        }
+        paint();
+      }
+      requestAnimationFrame(frame);
+    }
+    wrap.querySelector('.ring-prev').addEventListener('click', function () { stepBy(-1); if (calm) { rot = goal; goal = null; paint(); } });
+    wrap.querySelector('.ring-next').addEventListener('click', function () { stepBy(1); if (calm) { rot = goal; goal = null; paint(); } });
+    stage.addEventListener('mouseenter', function () { hover = true; });
+    stage.addEventListener('mouseleave', function () { hover = false; });
+    stage.addEventListener('pointerdown', function (e) {
+      drag = { x: e.clientX, rot: rot, moved: false }; goal = null;
+    });
+    window.addEventListener('pointermove', function (e) {
+      if (!drag) return;
+      var dx = e.clientX - drag.x;
+      if (Math.abs(dx) > 4) { drag.moved = true; stage.classList.add('dragging'); }
+      rot = drag.rot + dx * 0.35;
+    });
+    window.addEventListener('pointerup', function () {
+      if (!drag) return;
+      var moved = drag.moved; drag = null; stage.classList.remove('dragging');
+      if (moved) { goal = Math.round(rot / step) * step; hold = performance.now() + 4000; stage.dataset.justDragged = '1'; setTimeout(function () { delete stage.dataset.justDragged; }, 50); }
+    });
+    items.forEach(function (it, k) {
+      it.querySelector('a').addEventListener('click', function (e) {
+        e.preventDefault();
+        if (stage.dataset.justDragged) return;
+        if (k === front) { wrap.dispatchEvent(new CustomEvent('ring:open', { detail: k })); return; }
+        var d = ((k - front) % n + n) % n; if (d > n / 2) d -= n; stepBy(d);
+      });
+    });
+    paint(); requestAnimationFrame(frame);
+  });
+
+  // Pop-up viewer: every piece of art opens large, with its set to step through
+  (function () {
+    var lb = document.querySelector('.lightbox'); if (!lb) return;
+    var img = lb.querySelector('.lb-img'), nm = lb.querySelector('.lb-name'), mt = lb.querySelector('.lb-meta'), ct = lb.querySelector('.lb-count');
+    var set = [], at = 0, back = null;
+    function entry(el) {
+      var ring = el.closest('.ring-item');
+      if (ring) { var im = ring.querySelector('img'); return { src: im.getAttribute('src'), alt: im.alt, name: ring.getAttribute('data-name'), meta: ring.getAttribute('data-meta'), pixel: true }; }
+      var fig = el.closest('figure'), im2 = el.querySelector('img');
+      var an = fig.querySelector('.art-name'), am = fig.querySelector('.art-meta'), fc = fig.querySelector('figcaption');
+      return { src: el.getAttribute('href') || im2.getAttribute('src'), alt: im2.alt, name: an ? an.textContent : (fc ? fc.textContent : ''), meta: am ? am.textContent : '', pixel: el.classList.contains('pixel') || !!el.closest('.pixel') };
+    }
+    function pad(v) { return (v < 10 ? '0' : '') + v; }
+    function fit() {
+      var it = set[at]; if (!it || !it.pixel || !img.naturalWidth) { img.style.width = ''; return; }
+      var maxW = lb.clientWidth - (window.innerWidth < 640 ? 30 : 160), maxH = window.innerHeight - 170;
+      var k = Math.max(1, Math.floor(Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight)));
+      img.style.width = (img.naturalWidth * k) + 'px';
+    }
+    function draw() {
+      var it = set[at];
+      img.classList.toggle('pixel', it.pixel); img.style.width = '';
+      img.onload = fit; img.src = it.src; img.alt = it.alt;
+      if (img.complete) fit();
+      nm.textContent = it.name; mt.textContent = it.meta;
+      ct.textContent = set.length > 1 ? pad(at + 1) + ' / ' + pad(set.length) : '';
+      lb.classList.toggle('single', set.length < 2);
+    }
+    function open(list, k, from) {
+      set = list; at = k; back = from || document.activeElement;
+      draw(); lb.hidden = false; lb.classList.remove('open'); void lb.offsetWidth; lb.classList.add('open');
+      document.body.classList.add('lb-lock');
+      lb.querySelector('.lb-close').focus();
+    }
+    function close() {
+      lb.hidden = true; document.body.classList.remove('lb-lock');
+      if (back && back.focus) back.focus();
+    }
+    function move(d) { if (set.length < 2) return; at = (at + d + set.length) % set.length; draw(); }
+    lb.querySelector('.lb-close').addEventListener('click', close);
+    lb.querySelector('.lb-prev').addEventListener('click', function () { move(-1); });
+    lb.querySelector('.lb-next').addEventListener('click', function () { move(1); });
+    lb.addEventListener('click', function (e) { if (e.target === lb) close(); });
+    window.addEventListener('resize', function () { if (!lb.hidden) fit(); });
+    document.addEventListener('keydown', function (e) {
+      if (lb.hidden) return;
+      if (e.key === 'Escape') { close(); e.preventDefault(); }
+      else if (e.key === 'ArrowRight') { move(1); e.preventDefault(); }
+      else if (e.key === 'ArrowLeft') { move(-1); e.preventDefault(); }
+      else if (e.key === 'Tab') {
+        var f = Array.prototype.filter.call(lb.querySelectorAll('button'), function (b) { return getComputedStyle(b).visibility !== 'hidden'; });
+        var i = f.indexOf(document.activeElement);
+        if (e.shiftKey && i <= 0) { f[f.length - 1].focus(); e.preventDefault(); }
+        else if (!e.shiftKey && i === f.length - 1) { f[0].focus(); e.preventDefault(); }
+      }
+    });
+    // concept pieces and other marked art
+    document.addEventListener('click', function (e) {
+      var z = e.target.closest('[data-zoom]'); if (!z) return;
+      e.preventDefault();
+      var group = z.getAttribute('data-group');
+      var all = Array.prototype.slice.call(document.querySelectorAll('[data-zoom][data-group="' + group + '"]'));
+      open(all.map(entry), all.indexOf(z), z);
+    });
+    // wheel pieces: the expand button on the front piece
+    Array.prototype.forEach.call(document.querySelectorAll('.ring-wrap'), function (wrap) {
+      var frames = Array.prototype.slice.call(wrap.querySelectorAll('.ring-item .art-frame'));
+      wrap.addEventListener('ring:open', function (e) { open(frames.map(entry), e.detail, frames[e.detail]); });
+    });
+  })();
+
+  root.classList.add('routed');
+  show();
+  window.addEventListener('hashchange', show);
+
+  // Star hover and focus: show what the star opens
+  Array.prototype.forEach.call(document.querySelectorAll('.const'), function (c) {
+    var note = c.querySelector('.const-note');
+    function on(l) { note.innerHTML = '<strong></strong> '; note.firstChild.textContent = l.getAttribute('data-title') + '. '; note.appendChild(document.createTextNode(l.getAttribute('data-note'))); }
+    function off() { note.textContent = note.getAttribute('data-default'); }
+    Array.prototype.forEach.call(c.querySelectorAll('.s-link'), function (l) {
+      l.addEventListener('mouseenter', function () { on(l); });
+      l.addEventListener('focus', function () { on(l); });
+      l.addEventListener('mouseleave', off);
+      l.addEventListener('blur', off);
+    });
+  });
+
+  // Star chart wheel: every project (built from the project tabs) plus the About me sections
+  (function () {
+    var feat = document.querySelector('.feat'); if (!feat) return;
+    var wheel = feat.querySelector('.wheel'), slot = feat.querySelector('.w-const .w-slot');
+    var nameEl = feat.querySelector('.feat-name'), subEl = feat.querySelector('.feat-sub'), countEl = feat.querySelector('.feat-count');
+    var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var lensPics = {
+      'portfolio-final-spark': ['img/fs-morrigan.jpg', 'xMidYMid slice', ''],
+      'portfolio-celestine': ['img/concept-gown.jpg', 'xMidYMin slice', 'ink'],
+      'portfolio-cu-raiders': ['img/cu-raiders-overview.jpg', 'xMinYMin slice', ''],
+      'portfolio-scarlet-lily': ['img/sl-title.png', 'xMidYMid meet', 'pixel', '#081c1f'],
+      'portfolio-game-proposal': ['img/lens-proposal.jpg', 'xMidYMid slice', ''],
+      'portfolio-pavlova': ['img/pav-sketch-leap.jpg', 'xMidYMid slice', 'ink']
+    };
+    var items = Array.prototype.map.call(document.querySelectorAll('#view-portfolio .tabs .tab'), function (t) {
+      var key = t.getAttribute('href').slice(1);
+      var g = document.querySelector('[data-panel="' + key + '"] .plate-glyph svg');
+      var pic = lensPics[key] || null;
+      return { pic: pic, group: 'Projects', href: '#' + key, name: t.querySelector('.tab-name').textContent, sub: t.querySelector('.tab-sub').textContent, glyph: g ? g.innerHTML : '' };
+    });
+    function glyph(dots, lines) {
+      var l = lines.map(function (p) { return '<line x1="' + dots[p[0]][0] + '" y1="' + dots[p[0]][1] + '" x2="' + dots[p[1]][0] + '" y2="' + dots[p[1]][1] + '"/>'; }).join('');
+      var d = dots.map(function (p, k) { return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + (k ? 2.2 : 3.2) + '"/>'; }).join('');
+      return '<g class="g-lines">' + l + '</g><g class="g-dots">' + d + '</g>';
+    }
+    Object.keys(lensPics).forEach(function (k) { var im = new Image(); im.src = lensPics[k][0]; });
+    var stateEl = feat.querySelector('.feat-state'), dotsEl = feat.querySelector('.feat-dots'), dots = [];
+    ['Projects'].forEach(function (grp) {
+      var g = document.createElement('div'); g.className = 'feat-group';
+      var lab = document.createElement('span'); lab.textContent = grp; g.appendChild(lab);
+      items.forEach(function (it, k) {
+        if (it.group !== grp) return;
+        var b = document.createElement('button'); b.type = 'button'; b.className = 'feat-dot';
+        b.setAttribute('aria-label', it.group + ': ' + it.name);
+        b.addEventListener('click', function () { if (k !== i) go(k - i); });
+        g.appendChild(b); dots[k] = b;
+      });
+      dotsEl.appendChild(g);
+    });
+    var i = 0, turn = 0, timer = null, busy = null;
+    // lens fan: four full-size lenses on one hinge pin; the last in the DOM is in front
+    var fanEl = feat.querySelector('.mg-fan'), P = [-128, 48], STEP = 0, AWAY = 38;
+    var lenses = Array.prototype.map.call(fanEl.querySelectorAll('.mg-lens'), function (el) { return { el: el, a: 0, o: 1, raf: 0, t: 0 }; });
+    function setLens(L, a, o) { L.a = a; L.o = o; L.el.setAttribute('transform', 'rotate(' + a.toFixed(2) + ' ' + P[0] + ' ' + P[1] + ')'); L.el.style.opacity = o.toFixed(3); }
+    function ease(k) { return k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; }
+    function tween(L, a1, o1, dur, delay, done) {
+      cancelAnimationFrame(L.raf); clearTimeout(L.t);
+      L.t = setTimeout(function () {
+        var a0 = L.a, o0 = L.o, t0 = performance.now();
+        (function frame(now) {
+          var k = Math.min(1, (now - t0) / dur), e = ease(k);
+          setLens(L, a0 + (a1 - a0) * e, o0 + (o1 - o0) * e);
+          if (k < 1) L.raf = requestAnimationFrame(frame); else if (done) done();
+        })(t0);
+      }, delay);
+    }
+    function slots() { var n = lenses.length; lenses.forEach(function (L, k) { setLens(L, (n - 1 - k) * STEP, 1); }); }
+    slots();
+    function swing(dir) {
+      var n = lenses.length;
+      if (dir > 0) {
+        var front = lenses.pop();
+        tween(front, AWAY, 0, 420, 0, function () {
+          fanEl.insertBefore(front.el, fanEl.firstChild); lenses.unshift(front);
+          setLens(front, n * STEP, 0); tween(front, (n - 1) * STEP, 1, 420, 0);
+        });
+        lenses.forEach(function (L, k) { tween(L, (n - 2 - k) * STEP, 1, 560, 120 + (n - 2 - k) * 60); });
+      } else {
+        var back = lenses.shift();
+        tween(back, n * STEP, 0, 360, 0, function () {
+          fanEl.appendChild(back.el); lenses.push(back);
+          setLens(back, AWAY, 0); tween(back, 0, 1, 520, 0);
+        });
+        lenses.slice(0, n - 1).forEach(function (L, k) { tween(L, (n - 1 - k) * STEP, 1, 520, 80 + k * 50); });
+      }
+    }
+    function go(step) { return goStep(step); }
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+    function paint() {
+      var it = items[i];
+      if (it.pic) {
+        var pc = it.pic, sz = pc[2] === 'pixel' ? 190 : 214, off = -sz / 2;
+        slot.innerHTML = (pc[3] ? '<circle r="107" fill="' + pc[3] + '"/>' : '') +
+          '<image class="lens-pic ' + pc[2] + '" href="' + pc[0] + '" x="' + off + '" y="' + off + '" width="' + sz + '" height="' + sz + '" preserveAspectRatio="' + pc[1] + '"/>';
+      }
+      else slot.innerHTML = '<g transform="scale(1.3) translate(-70 -46)">' + it.glyph + '</g>';
+      nameEl.textContent = it.name; subEl.textContent = it.sub; if (stateEl) stateEl.textContent = it.group;
+      dots.forEach(function (d, k) { d.setAttribute('aria-current', k === i ? 'true' : 'false'); });
+      countEl.textContent = pad(i + 1) + ' / ' + pad(items.length);
+      wheel.setAttribute('href', it.href);
+      wheel.setAttribute('aria-label', 'Open ' + it.group + ': ' + it.name + '. ' + it.sub + '. Star ' + (i + 1) + ' of ' + items.length + '.');
+    }
+    function goStep(step) {
+      i = (i + step + items.length) % items.length;
+      if (calm) { paint(); return; }
+      turn += (step > 0 ? 1 : -1) * (100 + Math.min(Math.abs(step), 4) * 50);
+      wheel.style.setProperty('--turn', turn + 'deg');
+      wheel.classList.remove('in'); wheel.classList.add('out'); feat.classList.add('out');
+      swing(step > 0 ? 1 : -1);
+      clearTimeout(busy);
+      busy = setTimeout(function () {
+        paint();
+        wheel.classList.remove('out'); feat.classList.remove('out');
+        void wheel.offsetWidth; wheel.classList.add('in');
+      }, 520);
+    }
+    function play() { if (calm || timer) return; timer = setInterval(function () { if (!document.hidden && document.getElementById('view-home').classList.contains('active')) go(1); }, 6500); }
+    function pause() { clearInterval(timer); timer = null; }
+    Array.prototype.forEach.call(feat.querySelectorAll('.feat-btn'), function (b) {
+      b.addEventListener('click', function () { go(+b.getAttribute('data-step')); });
+    });
+    feat.addEventListener('mouseenter', pause); feat.addEventListener('mouseleave', play);
+    feat.addEventListener('focusin', pause); feat.addEventListener('focusout', play);
+    if (!calm && window.matchMedia('(hover: hover)').matches) {
+      wheel.addEventListener('mousemove', function (e) {
+        var r = wheel.getBoundingClientRect();
+        var x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+        wheel.style.setProperty('--ry', (x * 22).toFixed(1) + 'deg');
+        wheel.style.setProperty('--rx', (-y * 22).toFixed(1) + 'deg');
+        wheel.style.setProperty('--sc', '1.04');
+      });
+      wheel.addEventListener('mouseleave', function () { wheel.style.setProperty('--rx', '0deg'); wheel.style.setProperty('--ry', '0deg'); wheel.style.setProperty('--sc', '1'); });
+    }
+    paint(); play();
+  })();
+})();
+</script>
+<script>
+(function () {
+  var canvas = document.getElementById('sky');
+  var ctx = canvas.getContext('2d');
+  var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var stars = [], shots = [], w = 0, h = 0;
+  var ptr = { x: 0, y: 0, on: false }, par = { x: 0, y: 0 }, nextShot = 2.5;
+
+  function rng(seed) {
+    return function () {
+      seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+      var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  function build() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = window.innerWidth; h = window.innerHeight;
+    canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var rand = rng(1107);
+    var count = Math.round(w * h / 3800);
+    stars = [];
+    for (var i = 0; i < count; i++) {
+      var depth = rand() < 0.6 ? 0.35 : rand() < 0.75 ? 0.7 : 1.15; // far, mid, near
+      var big = depth > 1 && rand() > 0.5;
+      stars.push({
+        x: rand() * w, y: rand() * h, d: depth,
+        r: big ? 1.2 + rand() * 0.7 : 0.3 + depth * 0.5 + rand() * 0.3,
+        a: big ? 0.8 + rand() * 0.2 : 0.2 + depth * 0.35 + rand() * 0.2,
+        gold: rand() > 0.86,
+        tw: big || rand() > 0.7 ? 0.5 + rand() * 1.4 : 0,
+        ph: rand() * Math.PI * 2, px: 0, py: 0
+      });
+    }
+    draw(0, 0);
+  }
+
+  function wrap(v, m) { v = v % m; return v < 0 ? v + m : v; }
+
+  function draw(t, dt) {
+    ctx.clearRect(0, 0, w, h);
+    // ease the parallax toward the pointer
+    var tx = ptr.on ? (ptr.x / w - 0.5) * -34 : 0, ty = ptr.on ? (ptr.y / h - 0.5) * -22 : 0;
+    par.x += (tx - par.x) * Math.min(1, dt * 3); par.y += (ty - par.y) * Math.min(1, dt * 3);
+    var sy = window.scrollY || 0, near = [], R = 125, i, s;
+
+    for (i = 0; i < stars.length; i++) {
+      s = stars[i];
+      s.px = wrap(s.x + par.x * s.d + t * 2.2 * s.d, w);
+      s.py = wrap(s.y + par.y * s.d - sy * 0.06 * s.d, h);
+      var a = s.tw && !still ? s.a * (0.55 + 0.45 * Math.sin(t * s.tw + s.ph)) : s.a;
+      var r = s.r;
+      if (ptr.on) {
+        var dx = s.px - ptr.x, dy = s.py - ptr.y, d2 = dx * dx + dy * dy;
+        if (d2 < R * R) { var k = 1 - Math.sqrt(d2) / R; a = Math.min(1, a + k * 0.6); r += k * 0.8; near.push(s); s.k = k; }
+      }
+      ctx.globalAlpha = a;
+      ctx.fillStyle = s.gold ? '#e6c98a' : '#dfe6ff';
+      ctx.beginPath(); ctx.arc(s.px, s.py, r, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // stars near the pointer join into a passing constellation
+    ctx.strokeStyle = '#d9b56a'; ctx.lineWidth = 0.8;
+    for (i = 0; i < near.length; i++) {
+      for (var j = i + 1; j < near.length; j++) {
+        var ex = near[i].px - near[j].px, ey = near[i].py - near[j].py, e = Math.sqrt(ex * ex + ey * ey);
+        if (e < 78) {
+          ctx.globalAlpha = Math.min(near[i].k, near[j].k) * (1 - e / 78) * 0.9;
+          ctx.beginPath(); ctx.moveTo(near[i].px, near[i].py); ctx.lineTo(near[j].px, near[j].py); ctx.stroke();
+        }
+      }
+    }
+
+    // shooting stars
+    if (t > nextShot) {
+      var ang = Math.PI * (0.12 + Math.random() * 0.14), sp = 520 + Math.random() * 380;
+      shots.push({ x: Math.random() * w * 0.9, y: Math.random() * h * 0.45, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, life: 0, max: 0.7 + Math.random() * 0.5 });
+      nextShot = t + 3.5 + Math.random() * 6;
+    }
+    for (i = shots.length - 1; i >= 0; i--) {
+      var m = shots[i]; m.life += dt;
+      if (m.life > m.max) { shots.splice(i, 1); continue; }
+      m.x += m.vx * dt; m.y += m.vy * dt;
+      var f = Math.sin(Math.PI * m.life / m.max), tail = 0.16;
+      var g = ctx.createLinearGradient(m.x, m.y, m.x - m.vx * tail, m.y - m.vy * tail);
+      g.addColorStop(0, 'rgba(255, 244, 214, ' + (0.9 * f) + ')'); g.addColorStop(1, 'rgba(217, 181, 106, 0)');
+      ctx.globalAlpha = 1; ctx.strokeStyle = g; ctx.lineWidth = 1.6; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(m.x, m.y); ctx.lineTo(m.x - m.vx * tail, m.y - m.vy * tail); ctx.stroke();
+      ctx.strokeStyle = '#d9b56a'; ctx.lineWidth = 0.8;
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // a spark of light travels each home-page constellation
+  var sparks = [];
+  Array.prototype.forEach.call(document.querySelectorAll('.const svg'), function (svg, n) {
+    var segs = [], total = 0;
+    Array.prototype.forEach.call(svg.querySelectorAll('.lines line'), function (l, i) {
+      l.setAttribute('pathLength', '1'); l.style.animationDelay = (0.25 + i * 0.22) + 's';
+      var a = { x: +l.getAttribute('x1'), y: +l.getAttribute('y1') }, b = { x: +l.getAttribute('x2'), y: +l.getAttribute('y2') };
+      var len = Math.hypot(b.x - a.x, b.y - a.y); segs.push({ a: a, b: b, len: len, at: total }); total += len;
+    });
+    svg.classList.add('anim');
+    if (still || !segs.length) return;
+    var c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    c.setAttribute('r', '2.6'); c.setAttribute('class', 'spark');
+    svg.querySelector('.lines').appendChild(c);
+    sparks.push({ el: c, segs: segs, total: total, off: n * 1.7 });
+  });
+  function runSparks(t) {
+    for (var i = 0; i < sparks.length; i++) {
+      var s = sparks[i], cycle = s.total / 90 + 2.2, u = ((t + s.off) % cycle) * 90;
+      if (t < 2 || u > s.total) { s.el.style.opacity = 0; continue; }
+      for (var j = 0; j < s.segs.length; j++) {
+        var g = s.segs[j];
+        if (u <= g.at + g.len) {
+          var k = (u - g.at) / g.len;
+          s.el.setAttribute('cx', g.a.x + (g.b.x - g.a.x) * k); s.el.setAttribute('cy', g.a.y + (g.b.y - g.a.y) * k);
+          s.el.style.opacity = Math.min(1, Math.sin(Math.PI * k) * 1.6 + 0.15); break;
+        }
+      }
+    }
+  }
+
+  var last = 0;
+  function loop(now) {
+    var t = now / 1000, dt = Math.min(0.05, t - last); last = t;
+    draw(t, dt); runSparks(t);
+    requestAnimationFrame(loop);
+  }
+
+  build();
+  window.addEventListener('resize', build);
+  if (!still) {
+    if (window.matchMedia('(hover: hover)').matches) {
+      window.addEventListener('pointermove', function (e) { ptr.x = e.clientX; ptr.y = e.clientY; ptr.on = true; });
+      document.addEventListener('pointerleave', function () { ptr.on = false; });
+    }
+    requestAnimationFrame(loop);
+  }
+})();
+</script>
+</body>
+</html>
